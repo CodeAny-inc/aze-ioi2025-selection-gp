@@ -18,7 +18,7 @@ const ranking1CSV = `#;Username;User;gcd;trucks;ranking;Global;
 14;selection2025_1114;Oruc Cabbarlı Şərafətdin;100;0;0;100;
 15;selection2025_1020;Rahidil Bayramlı Səbuhi;42;27;20;89;
 16;selection2025_1017;Elvin Orucov Məmməd;12;20;50;82;
-17;selection2025_1002;Əhməd Qənbərli Faiq;12;39;20;71;
+17;selection2025_1002;Əhməd Qəmbərli Faiq;12;39;20;71;
 18;selection2025_1016;Elvin İmanlı Aydın;42;7;20;69;
 19;selection2025_1039;Elnur Mirzəli Teymur;42;20;0;62;
 20;selection2025_1006;Nəsir Bəşirov Bəşir;12;20;20;52;
@@ -229,6 +229,13 @@ function handleTiedScores(users, roundKey) {
         .sort((a, b) => b - a)
         .forEach(score => {
             const tiedUsers = scoreGroups[score];
+            const count = tiedUsers.length;
+            let placeRange = `${currentPlace}`;
+
+            if(count > 1) {
+                placeRange += `-${currentPlace + count - 1}`;
+            }
+
             let sumPoints = 0;
 
             for (let i = 0; i < tiedUsers.length; i++) {
@@ -239,7 +246,7 @@ function handleTiedScores(users, roundKey) {
             const averagePoints = tiedUsers.length > 0 ? sumPoints / tiedUsers.length : 0;
 
             tiedUsers.forEach(user => {
-                user[`${roundKey} Place`] = currentPlace;
+                user[`${roundKey} Place`] = placeRange;
                 user[`${roundKey} GP Score`] = parseFloat(averagePoints.toFixed(2));
             });
 
@@ -440,19 +447,32 @@ function initializeDataTable(users) {
                     return `<div class="user-cell">${data}</div>`;
                 }
             },
-            { data: 'Round 1 Place', title: 'R1 Place' },
-            { data: 'Round 2 Place', title: 'R2 Place' },
+            { 
+                data: 'Round 1 Place', 
+                title: 'R1 Place',
+                render: function(data, type, row) {
+                    return row.missedRounds.includes('Round 1') ? '❌' : data;
+                }
+            },
+            { 
+                data: 'Round 2 Place', 
+                title: 'R2 Place',
+                render: function(data, type, row) {
+                    return row.missedRounds.includes('Round 2') ? '❌' : data;
+                }
+            },
             { 
                 data: 'Round 1 GP Score',
                 title: 'GP1 Score',
-                render: function(data) {
-                    return data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00';
+                render: function(data, type, row) {
+                    return row.missedRounds.includes('Round 1') ? '❌' : (data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00');
                 }
             },
             { 
                 data: 'Round 2 GP Score',
                 title: 'GP2 Score',
-                render: function(data) {
+                render: function(data, type, row) {
+                    return row.missedRounds.includes('Round 2') ? '❌' : (data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00');
                     return data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00';
                 }
             },
@@ -554,6 +574,11 @@ async function main() {
         // Parse CSV data
         const data1 = parseCSV(ranking1CSV);
         const data2 = parseCSV(ranking2CSV);
+
+        // Sets to track participants by round
+        const round1Participants = new Set(data1.map(entry => cleanUserName(entry.User)));
+        const round2Participants = new Set(data2.map(entry => cleanUserName(entry.User)));
+        
         
         // Process and merge data
         const usersMap = {};
@@ -567,7 +592,8 @@ async function main() {
                     rounds: {
                         'Round 1': parseFloat(entry.Global) || 0,
                         'Round 2': 0
-                    }
+                    },
+                    missedRounds: []
                 };
             } else {
                 usersMap[userNameClean].rounds['Round 1'] = parseFloat(entry.Global) || 0;
@@ -583,21 +609,36 @@ async function main() {
                     rounds: {
                         'Round 1': 0,
                         'Round 2': parseFloat(entry.Global) || 0
-                    }
+                    },
+                    missedRounds: []
                 };
             } else {
                 usersMap[userNameClean].rounds['Round 2'] = parseFloat(entry.Global) || 0;
             }
         });
+
+        // Identify missing participants
+        Object.values(usersMap).forEach(user => {
+            const userName = user.User;
+            if (!round1Participants.has(userName)) {
+                user.missedRounds.push('Round 1');
+            }
+            if (!round2Participants.has(userName)) {
+                user.missedRounds.push('Round 2');
+            }
+        });
         
         // Convert to array and process
-        const users = Object.values(usersMap);
+        let users = Object.values(usersMap);
         
         // Calculate scores and rankings
         handleTiedScores(users, 'Round 1');
         handleTiedScores(users, 'Round 2');
         calculateFinalScores(users);
         calculateRankingsAndTrends(users);
+
+        // Filter out users with "Best 3 Scores" of 0
+        users = users.filter(user => user['Best 3 Scores'] > 0);
         
         // Sort by Total Score descending
         users.sort((a, b) => b['Total Score'] - a['Total Score']);
