@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azerbaijan IOI Team 2025 Selection GP scores</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">    
+    <link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" rel="stylesheet">   
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header Banner -->
+    <div class="trophy-banner">
+        <i class="fas fa-trophy"></i>
+        <h1 class="text-white mb-2">Azerbaijan IOI Team 2025</h1>
+        <p class="text-white-50 mb-0">Selection Grand Prix Scores</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container-fluid px-4">
+        <!-- Filters Section -->
+        <div class="filter-section mb-4">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="filter-label">Round</label>
+                    <select id="roundFilter" class="form-select">
+                        <option value="">All Rounds</option>
+                        <option value="1">Round 1</option>
+                        <option value="2">Round 2</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="filter-label">Score Range</label>
+                    <select id="scoreFilter" class="form-select">
+                        <option value="">All Scores</option>
+                        <option value="high">High Scores (>75)</option>
+                        <option value="medium">Medium Scores (30-75)</option>
+                        <option value="low">Low Scores (<30)</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="filter-label">Ranking Performance</label>
+                    <select id="performanceFilter" class="form-select">
+                        <option value="">All Performances</option>
+                        <option value="improved">Improved Ranking</option>
+                        <option value="stable">Stable Ranking</option>
+                        <option value="declined">Declined Ranking</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="filter-label">Quick Search</label>
+                    <div class="search-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="quickSearch" class="form-control" placeholder="Search participant...">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Summary -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon bg-primary">
+                        <i class="fas fa-users text-white"></i>
+                    </div>
+                    <div class="stats-info">
+                        <h6>Total Participants</h6>
+                        <h3 id="totalParticipants">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon bg-success">
+                        <i class="fas fa-trophy text-white"></i>
+                    </div>
+                    <div class="stats-info">
+                        <h6>Top Score</h6>
+                        <h3 id="topScore">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon bg-info">
+                        <i class="fas fa-chart-line text-white"></i>
+                    </div>
+                    <div class="stats-info">
+                        <h6>Average Score</h6>
+                        <h3 id="avgScore">0</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Table -->
+        <div class="table-container">
+            <table id="scoresTable" class="table table-hover w-100">
+                <thead>
+                    <tr>
+                        <th>Participant</th>
+                        <th>R1 Place</th>
+                        <th>R2 Place</th>
+                        <th>GP1 Score</th>
+                        <th>GP2 Score</th>
+                        <th>Total</th>
+                        <th>Best 3</th>
+                        <th>Bonus</th>
+                        <th>Trend</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- User Details Modal -->
+    <div class="modal fade" id="userDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-user-circle me-2"></i>
+                        <span id="modalUserName"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Performance Cards -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="performance-card">
+                                <h6>Round 1 Performance</h6>
+                                <div class="progress">
+                                    <div class="progress-bar round1-progress" role="progressbar"></div>
+                                </div>
+                                <div class="score-details">
+                                    <div class="score-item">
+                                        <div class="score-label">Place</div>
+                                        <div id="round1Place" class="score-value"></div>
+                                    </div>
+                                    <div class="score-item">
+                                        <div class="score-label">Score</div>
+                                        <div id="round1Score" class="score-value"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="performance-card">
+                                <h6>Round 2 Performance</h6>
+                                <div class="progress">
+                                    <div class="progress-bar round2-progress" role="progressbar"></div>
+                                </div>
+                                <div class="score-details">
+                                    <div class="score-item">
+                                        <div class="score-label">Place</div>
+                                        <div id="round2Place" class="score-value"></div>
+                                    </div>
+                                    <div class="score-item">
+                                        <div class="score-label">Score</div>
+                                        <div id="round2Score" class="score-value"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Overall Statistics -->
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-icon bg-primary">
+                                <i class="fas fa-calculator text-white"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="label">Total Score</div>
+                                <div id="modalTotalScore" class="value"></div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon bg-success">
+                                <i class="fas fa-medal text-white"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="label">Best 3 Scores</div>
+                                <div id="modalBestScores" class="value"></div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon bg-info">
+                                <i class="fas fa-star text-white"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="label">Bonus Points</div>
+                                <div id="modalBonusPoints" class="value"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ranking Analysis -->
+                    <div class="ranking-analysis mt-4">
+                        <h6 class="section-title">Ranking Analysis</h6>
+                        <div id="rankingAnalysis" class="analysis-text">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    
+    <script src="script.js"></script>
+</body>
+</html>
