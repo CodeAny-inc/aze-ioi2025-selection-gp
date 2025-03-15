@@ -105,8 +105,10 @@
                         <th>Participant</th>
                         <th>R1 Place</th>
                         <th>R2 Place</th>
+                        <th>R3 Place</th>
                         <th>GP1 Score</th>
                         <th>GP2 Score</th>
+                        <th>GP3 Score</th>
                         <th>Total</th>
                         <th>Best 3</th>
                         <th>Bonus</th>
@@ -170,6 +172,24 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="performance-card">
+                                <h6>Round 3 Performance</h6>
+                                <div class="progress">
+                                    <div class="progress-bar round3-progress" role="progressbar"></div>
+                                </div>
+                                <div class="score-details">
+                                    <div class="score-item">
+                                        <div class="score-label">Place</div>
+                                        <div id="round3Place" class="score-value"></div>
+                                    </div>
+                                    <div class="score-item">
+                                        <div class="score-label">Score</div>
+                                        <div id="round3Score" class="score-value"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Overall Statistics -->
@@ -202,15 +222,14 @@
                             </div>
                         </div>
                     </div>
-                    <!-- TODO: Make perfomance improvement based on total bonus and more explanations-->
-                    <!-- Ranking Analysis --
+                  
                     <div class="ranking-analysis mt-4">
                         <h6 class="section-title">Ranking Analysis</h6>
                         <div id="rankingAnalysis" class="analysis-text">
                             
                         </div>
                     </div>
-                -->
+                
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

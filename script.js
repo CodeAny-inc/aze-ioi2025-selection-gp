@@ -185,6 +185,68 @@ const ranking2CSV = `#;Username;User;discount;permutations;password;Global;;
 56;selection2025_2054;İslam Okan;0;0;0;0;;
 57;selection2025_2059;Məhəmməd Səttarlı;0;0;0;0;;`;
 
+const ranking3CSV = `#;Username;User;Selection2025_pita;Selection2025_square;Selection2025_max-diametr;Global
+1;selection2025_3017;Həsən Vəliyev;100.0;87.47;100.0;287.47
+2;selection2025_3014;Elvin İmanlı;100.0;83.94;100.0;283.94
+3;selection2025_3004;Ayxan Dəmirli;100.0;78.65;100.0;278.65
+4;selection2025_3021;Muhammedali Əhmədov;100.0;76.88;100.0;276.88
+5;selection2025_3010;Əli Əliyev;100.0;73.35;100.0;273.35
+6;selection2025_3032;Tahir Əliyev;100.0;69.82;100.0;269.82
+7;selection2025_3022;Nəsir Bəşirov;100.0;32.0;45.0;177.0
+8;selection2025_3024;Ömər Əliməmmədzadə;100.0;32.0;45.0;177.0
+9;selection2025_3002;Atabəy Rəcəbli;67.0;75.12;25.0;167.12
+10;selection2025_3043;Əli Suleymanzadə;100.0;48.29;0.0;148.29
+11;selection2025_3006;Əhməd Qəmbərli;67.0;76.88;0.0;143.88
+12;selection2025_3028;Raul Cəfərli;100.0;14.0;25.0;139.0
+13;selection2025_3039;Vaqif Seyidzadə;100.0;14.0;25.0;139.0
+14;selection2025_3011;Əliyyiəkbər Şirinli;100.0;14.0;15.0;129.0
+15;selection2025_3027;Rahidil Bayramlı;67.0;14.0;45.0;126.0
+16;selection2025_3013;Elvin Orucov;51.0;68.06;0.0;119.06
+17;selection2025_3030;Rza Ağayev;100.0;0.0;15.0;115.0
+18;selection2025_3059;Turan Eldarov;100.0;14.0;0.0;114.0
+19;selection2025_3042;Mövlan Əmənov;51.0;32.0;25.0;108.0
+20;selection2025_3003;Aytən İskəndərova;67.0;14.0;20.0;101.0
+21;selection2025_3046;İsmayıl Məmmədov;67.0;14.0;15.0;96.0
+22;selection2025_3056;Bəxtiyar Nəcəfzadə;67.0;0.0;25.0;92.0
+23;selection2025_3007;Əkbər Əhmədov;51.0;14.0;25.0;90.0
+24;selection2025_3008;Elay Verdiyev;51.0;14.0;25.0;90.0
+25;selection2025_3035;Xanlar İsmayılov;51.0;14.0;25.0;90.0
+26;selection2025_3049;Qədir Məmmədov;67.0;14.0;0.0;81.0
+27;selection2025_3023;Nurəddin Qarayev;38.0;14.0;25.0;77.0
+28;selection2025_3019;Mərd Cəfərzadə;51.0;14.0;5.0;70.0
+29;selection2025_3016;Fikrət Əsədzadə;51.0;14.0;0.0;65.0
+30;selection2025_3015;Fateh Əhmədzadə;51.0;14.0;0.0;65.0
+31;selection2025_3018;Hüseyn Əhmədli;51.0;14.0;0.0;65.0
+32;selection2025_3001;Amal Hacıyev;51.0;0.0;5.0;56.0
+33;selection2025_3005;Əbülfəz Qəhrəmanov;17.0;14.0;25.0;56.0
+34;selection2025_3040;Emil Əliyev;38.0;14.0;0.0;52.0
+35;selection2025_3029;Rəvan Sadıqov;51.0;0.0;0.0;51.0
+36;selection2025_3044;Cəsur Rasulzadə;51.0;0.0;0.0;51.0
+37;selection2025_3047;Ayxan Xudaverdiyev;51.0;0.0;0.0;51.0
+38;selection2025_3048;Rəşid Həşimzadə;51.0;0.0;0.0;51.0
+39;selection2025_3051;Valeh Ağammədov;51.0;0.0;0.0;51.0
+40;selection2025_3052;İslam Okan;51.0;0.0;0.0;51.0
+41;selection2025_3057;Məhəmməd Səttarlı;51.0;0.0;0.0;51.0
+42;selection2025_3026;Osman Əhmədzadə;17.0;14.0;5.0;36.0
+43;selection2025_3036;Xədicə Mahmudova;17.0;14.0;0.0;31.0
+44;selection2025_3041;İsmayıl Quluzadə;17.0;14.0;0.0;31.0
+45;selection2025_3045;Cəbrayıl Namazlı;5.0;0.0;25.0;30.0
+46;selection2025_3020;Mirrəhim Mirvəlişli;17.0;0.0;5.0;22.0
+47;selection2025_3050;Yusif Hidayətzadə;17.0;0.0;5.0;22.0
+48;selection2025_3009;Əli Həsənli;5.0;14.0;0.0;19.0
+49;selection2025_3055;Xədicə Məhərli;17.0;0.0;0.0;17.0
+50;selection2025_3058;Nurlan Cabbarlı;17.0;0.0;0.0;17.0
+51;selection2025_3012;Elnur Mirzəli;5.0;0.0;0.0;5.0
+52;selection2025_3054;Ədalət Əzimli;0.0;0.0;0.0;0.0
+53;selection2025_3025;Oruc Cabbarlı;0.0;0.0;0.0;0.0
+54;selection2025_3033;Turab Haqverdiyev;0.0;0.0;0.0;0.0
+55;selection2025_3031;Sübhan Namazlı;0.0;0.0;0.0;0.0
+56;selection2025_3034;Uveys Əl-salehi;0.0;0.0;0.0;0.0
+57;selection2025_3037;Ayan Kərimova;0.0;0.0;0.0;0.0
+58;selection2025_3038;Leyla Hacızadə;0.0;0.0;0.0;0.0
+59;selection2025_3053;Amin Məmmədov;0.0;0.0;0.0;0.0
+60;selection2025_3060;Dummy Dummy;0.0;0.0;0.0;0.0`;
+
 // Parse CSV and return array of objects
 function parseCSV(csvString) {
     const parsed = Papa.parse(csvString, {
@@ -256,108 +318,124 @@ function handleTiedScores(users, roundKey) {
 
 // Calculate best 3 scores
 function calculateBest3Scores(gpScores) {
-    // Since there are only two rounds, sum them directly
+    // Since there are only three rounds, sum the available scores (ignoring zeros)
     const validScores = gpScores.filter(score => 
         score !== undefined && score !== null && !isNaN(score) && score > 0
     );
     
     const sortedScores = validScores.sort((a, b) => b - a);
-    // If less than 3 scores, sum what is available
     return sortedScores.slice(0, 3).reduce((sum, score) => sum + score, 0);
 }
 
-// Calculate rankings and trends based on Round 1 and Round 2 GP Scores
-function calculateRankingsAndTrends(users) {
-    // Sort by Round 1 GP Score for original ranking
-    const originalRanking = [...users]
-        .sort((a, b) => b['Round 1 GP Score'] - a['Round 1 GP Score'])
-        .map(user => user.User);
-    
-    // Sort by Round 2 GP Score for bonus ranking
-    const bonusRanking = [...users]
-        .sort((a, b) => b['Round 2 GP Score'] - a['Round 2 GP Score'])
-        .map(user => user.User);
-    
-    users.forEach(user => {
-        const originalRank = originalRanking.indexOf(user.User) + 1;
-        const bonusRank = bonusRanking.indexOf(user.User) + 1;
-        
-        // Set default values if not found
-        user.originalRank = originalRank > 0 ? originalRank : 'N/A';
-        user.bonusRank = bonusRank > 0 ? bonusRank : 'N/A';
-        
-        // Calculate ranking difference
-        let rankDiff = 0;
-        if (user.originalRank !== 'N/A' && user.bonusRank !== 'N/A') {
-            rankDiff = user.originalRank - user.bonusRank;
-        }
+// New function to get rankings with tie handling
+function getRanking(users, scoreKey) {
+    const sortedUsers = [...users].sort((a, b) => b[scoreKey] - a[scoreKey]);
+    const ranking = [];
+    let currentRank = 1;
+    let tieCount = 1;
 
-        if (rankDiff > 0) {
-            user.trend = 'improved';
-        } else if (rankDiff < 0) {
-            user.trend = 'declined';
+    sortedUsers.forEach((user, index) => {
+        if (index > 0 && user[scoreKey] < sortedUsers[index - 1][scoreKey]) {
+            currentRank += tieCount;
+            tieCount = 1;
+        } else if (index > 0 && user[scoreKey] === sortedUsers[index - 1][scoreKey]) {
+            tieCount++;
+        }
+        ranking.push({ user: user.User, rank: currentRank });
+    });
+
+    return ranking;
+}
+
+// Calculate rankings and trends based on previous best (Rounds 1 & 2) vs current best (all rounds)
+function calculateRankingsAndTrends(users) {
+    // Calculate previous best scores (Rounds 1 & 2)
+    users.forEach(user => {
+        const round1Score = parseFloat(user['Round 1 GP Score']) || 0;
+        const round2Score = parseFloat(user['Round 2 GP Score']) || 0;
+        user['Previous Best Scores'] = round1Score + round2Score; // Sum of Rounds 1 & 2
+    });
+
+    // Previous ranking based on Rounds 1 & 2
+    const previousRanking = getRanking(users, 'Previous Best Scores');
+    
+    // Current ranking based on Best 3 Scores (already calculated)
+    const currentRanking = getRanking(users, 'Best 3 Scores');
+    
+    // Create rank maps
+    const previousRankMap = {};
+    previousRanking.forEach(item => {
+        previousRankMap[item.user] = item.rank;
+    });
+
+    const currentRankMap = {};
+    currentRanking.forEach(item => {
+        currentRankMap[item.user] = item.rank;
+    });
+    
+    // Assign ranks and calculate rank difference
+    users.forEach(user => {
+        user.previousRank = previousRankMap[user.User] || null;
+        user.currentRank = currentRankMap[user.User] || null;
+        
+        if (user.previousRank && user.currentRank) {
+            user.rankDiff = user.previousRank - user.currentRank; // Positive means improvement
         } else {
-            user.trend = 'stable';
+            user.rankDiff = 0; // Default for users missing ranks
         }
     });
 }
 
-// Calculate final scores for users based on Round 1 and Round 2 GP Scores
+// Calculate final scores for users based on Round 1, Round 2 and Round 3 GP Scores
 function calculateFinalScores(users) {
     users.forEach(user => {
-        // Ensure Round GP Scores are numbers
         const round1Score = parseFloat(user['Round 1 GP Score']) || 0;
         const round2Score = parseFloat(user['Round 2 GP Score']) || 0;
+        const round3Score = parseFloat(user['Round 3 GP Score']) || 0;
 
-        // Calculate Total Score
-        user['Total Score'] = round1Score + round2Score;
+        user['Total Score'] = round1Score + round2Score + round3Score;
         
-        // Calculate Best 3 scores
-        const gpScores = [round1Score, round2Score];
+        const gpScores = [round1Score, round2Score, round3Score];
         user['Best 3 Scores'] = parseFloat(calculateBest3Scores(gpScores).toFixed(2));
         
-        // Calculate Bonus Points (20% of Best 3 Scores)
         user['Bonus Points'] = parseFloat((user['Best 3 Scores'] * 0.2).toFixed(2));
     });
 }
 
 // Get trend indicator HTML
 function getTrendIndicator(user) {
-    const trendConfig = {
-        improved: {
-            icon: 'arrow-up',
-            class: 'bg-success',
-            text: 'Improved'
-        },
-        declined: {
-            icon: 'arrow-down',
-            class: 'bg-warning',
-            text: 'Declined'
-        },
-        stable: {
-            icon: 'equals',
-            class: 'bg-info',
-            text: 'Stable'
-        }
-    };
+    const rankDiff = user.rankDiff;
+    let icon, className, text;
 
-    const config = trendConfig[user.trend] || trendConfig['stable'];
+    if (rankDiff > 0) {
+        icon = 'arrow-up';
+        className = 'bg-success';
+        text = `↑${rankDiff}`;
+    } else if (rankDiff < 0) {
+        icon = 'arrow-down';
+        className = 'bg-danger';
+        text = `↓${Math.abs(rankDiff)}`;
+    } else {
+        icon = 'minus';
+        className = 'bg-info';
+        text = '—';
+    }
+
     return `
-        <span class="badge ${config.class}" 
-            title="Original rank: ${user.originalRank}, Bonus rank: ${user.bonusRank}">
-            <i class="fas fa-${config.icon}"></i> 
-            ${config.text}
+        <span class="badge ${className}" 
+            title="Previous rank: ${user.previousRank}, Current rank: ${user.currentRank}">
+            <i class="fas fa-${icon}"></i> 
+            ${text}
         </span>`;
 }
 
 // Show user details in modal
 function showUserDetails(userData) {
-    // Update modal title
     document.getElementById('modalUserName').textContent = userData.User;
     
-    // Update progress bars
     const round1Progress = (userData['Round 1 GP Score'] / 100) * 100;
-    const round2Progress = (userData['Round 2 GP Score'] / 100) * 100;
+    const round2Progress = (userData['Round 2 GP Score'] / 100) * 100;    
+    const round3Progress = (userData['Round 3 GP Score'] / 100) * 100;
     
     $('.round1-progress')
         .css('width', `${round1Progress}%`)
@@ -370,50 +448,54 @@ function showUserDetails(userData) {
         .attr('aria-valuenow', round2Progress)
         .removeClass('bg-success bg-warning bg-danger')
         .addClass(getProgressBarClass(round2Progress));
+
+    $('.round3-progress')
+        .css('width', `${round3Progress}%`)
+        .attr('aria-valuenow', round3Progress)
+        .removeClass('bg-success bg-warning bg-danger')
+        .addClass(getProgressBarClass(round3Progress));
     
-    // Update scores
     $('#round1Place').text(userData['Round 1 Place'] || 'N/A');
     $('#round1Score').text(userData['Round 1 GP Score'] ? userData['Round 1 GP Score'].toFixed(2) : '0.00');
     $('#round2Place').text(userData['Round 2 Place'] || 'N/A');
     $('#round2Score').text(userData['Round 2 GP Score'] ? userData['Round 2 GP Score'].toFixed(2) : '0.00');
+    $('#round3Place').text(userData['Round 3 Place'] || 'N/A');
+    $('#round3Score').text(userData['Round 3 GP Score'] ? userData['Round 3 GP Score'].toFixed(2) : '0.00');
     
-    // Update statistics
     $('#modalTotalScore').text(userData['Total Score'].toFixed(2));
     $('#modalBestScores').text(userData['Best 3 Scores'].toFixed(2));
     $('#modalBonusPoints').text(userData['Bonus Points'].toFixed(2));
     
-    // Update ranking analysis
     $('#rankingAnalysis').html(generateRankingAnalysis(userData));
     
-    // Show modal
     const modal = new bootstrap.Modal(document.getElementById('userDetailsModal'));
     modal.show();
 }
 
 // Generate ranking analysis HTML
 function generateRankingAnalysis(userData) {
-    const rankChange = userData.originalRank !== 'N/A' && userData.bonusRank !== 'N/A' ? (userData.originalRank - userData.bonusRank) : 0;
+    const rankChange = userData.rankDiff || 0;
     let analysisHtml = '<div class="analysis-content">';
     
     if (rankChange > 0) {
         analysisHtml += `
             <div class="alert alert-success">
                 <i class="fas fa-arrow-up me-2"></i>
-                Ranking improved by ${rankChange} position(s)
-                (from ${userData.originalRank} to ${userData.bonusRank})
+                Moved up ${rankChange} position(s) 
+                (from rank ${userData.previousRank} to ${userData.currentRank})
             </div>`;
     } else if (rankChange < 0) {
         analysisHtml += `
-            <div class="alert alert-warning">
+            <div class="alert alert-danger">
                 <i class="fas fa-arrow-down me-2"></i>
-                Ranking dropped by ${Math.abs(rankChange)} position(s)
-                (from ${userData.originalRank} to ${userData.bonusRank})
+                Moved down ${Math.abs(rankChange)} position(s) 
+                (from rank ${userData.previousRank} to ${userData.currentRank})
             </div>`;
     } else {
         analysisHtml += `
             <div class="alert alert-info">
-                <i class="fas fa-equals me-2"></i>
-                Maintained ranking position at ${userData.originalRank}
+                <i class="fas fa-minus me-2"></i>
+                Position unchanged at rank ${userData.currentRank}
             </div>`;
     }
     
@@ -430,9 +512,9 @@ function getProgressBarClass(score) {
 // Update summary statistics based on Total Score
 function updateSummaryStats(users) {
     $('#totalParticipants').text(users.length);
-    $('#topScore').text(Math.max(...users.map(u => u['Total Score'])).toFixed(2));
-    $('#avgScore').text((users.reduce((sum, u) => sum + u['Total Score'], 0) / users.length).toFixed(2));
-    $('#perfectScores').text(users.filter(u => u['Total Score'] >= 200).length); // Adjusted threshold based on two rounds
+    $('#topScore').text(Math.max(...users.map(u => u['Best 3 Scores'])).toFixed(2));
+    $('#avgScore').text((users.reduce((sum, u) => sum + u['Best 3 Scores'], 0) / users.length).toFixed(2));
+    $('#perfectScores').text(users.filter(u => u['Best 3 Scores'] >= 200).length);
 }
 
 // Initialize DataTable without Final Score
@@ -461,6 +543,13 @@ function initializeDataTable(users) {
                     return row.missedRounds.includes('Round 2') ? '❌' : data;
                 }
             },
+            {
+                data: 'Round 3 Place',
+                title: 'R3 Place',
+                render: function(data, type, row) {
+                    return row.missedRounds.includes('Round 3') ? '❌' : data;
+                }
+            },
             { 
                 data: 'Round 1 GP Score',
                 title: 'GP1 Score',
@@ -473,7 +562,13 @@ function initializeDataTable(users) {
                 title: 'GP2 Score',
                 render: function(data, type, row) {
                     return row.missedRounds.includes('Round 2') ? '❌' : (data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00');
-                    return data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00';
+                }
+            },
+            {
+                data: 'Round 3 GP Score',
+                title: 'GP3 Score',
+                render: function(data, type, row) {
+                    return row.missedRounds.includes('Round 3') ? '❌' : (data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00');
                 }
             },
             { 
@@ -498,8 +593,8 @@ function initializeDataTable(users) {
                 }
             },
             { 
-                data: 'trend',
-                title: 'Trend',
+                data: 'rankDiff',
+                title: 'Position Change',
                 render: function(data, type, row) {
                     return getTrendIndicator(row);
                 }
@@ -517,7 +612,7 @@ function initializeDataTable(users) {
                 }
             }
         ],
-        order: [[5, 'desc']], // Order by Total Score descending
+        order: [[8, 'desc']], // Sort by Best 3 Scores
         pageLength: 10,
         responsive: true,
         language: {
@@ -538,26 +633,28 @@ function setupCustomFilters() {
     // Add combined filter handler
     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
         const row = globalData[dataIndex];
-        
         // Round filter
         const roundFilter = $('#roundFilter').val();
         if (roundFilter === '1' && row['Round 1 GP Score'] === 0) return false;
         if (roundFilter === '2' && row['Round 2 GP Score'] === 0) return false;
+        if (roundFilter === '3' && row['Round 3 GP Score'] === 0) return false;
         
         // Score filter
         const scoreFilter = $('#scoreFilter').val();
-        const totalScore = row['Total Score'];
-        if (scoreFilter === 'high' && totalScore <= 150) return false; // Adjusted threshold based on two rounds (max 200)
+        const totalScore = row['Best 3 Scores']; // Changed to Best 3 Scores for consistency
+        if (scoreFilter === 'high' && totalScore <= 150) return false;
         if (scoreFilter === 'medium' && (totalScore <= 100 || totalScore > 150)) return false;
         if (scoreFilter === 'low' && totalScore > 100) return false;
         
-        // Performance filter
+        // Performance filter (updated for numeric comparison)
         const perfFilter = $('#performanceFilter').val();
-        if (perfFilter && perfFilter !== row.trend) return false;
+        if (perfFilter === 'up' && row.rankDiff <= 0) return false;
+        if (perfFilter === 'down' && row.rankDiff >= 0) return false;
+        if (perfFilter === 'stable' && row.rankDiff !== 0) return false;
         
         return true;
     });
-    
+
     // Add event listeners
     $('#roundFilter, #scoreFilter, #performanceFilter').on('change', function() {
         dataTable.draw();
@@ -574,11 +671,12 @@ async function main() {
         // Parse CSV data
         const data1 = parseCSV(ranking1CSV);
         const data2 = parseCSV(ranking2CSV);
+        const data3 = parseCSV(ranking3CSV);
 
         // Sets to track participants by round
         const round1Participants = new Set(data1.map(entry => cleanUserName(entry.User)));
-        const round2Participants = new Set(data2.map(entry => cleanUserName(entry.User)));
-        
+        const round2Participants = new Set(data2.map(entry => cleanUserName(entry.User)));        
+        const round3Participants = new Set(data3.map(entry => cleanUserName(entry.User)));
         
         // Process and merge data
         const usersMap = {};
@@ -591,7 +689,8 @@ async function main() {
                     User: userNameClean,
                     rounds: {
                         'Round 1': parseFloat(entry.Global) || 0,
-                        'Round 2': 0
+                        'Round 2': 0,                        
+                        'Round 3': 0,
                     },
                     missedRounds: []
                 };
@@ -608,12 +707,31 @@ async function main() {
                     User: userNameClean,
                     rounds: {
                         'Round 1': 0,
-                        'Round 2': parseFloat(entry.Global) || 0
+                        'Round 2': parseFloat(entry.Global) || 0,
+                        'Round 3': 0
                     },
                     missedRounds: []
                 };
             } else {
                 usersMap[userNameClean].rounds['Round 2'] = parseFloat(entry.Global) || 0;
+            }
+        });
+
+        // Process Round 3
+        data3.forEach(entry => {
+            const userNameClean = cleanUserName(entry.User);
+            if (!usersMap[userNameClean]) {
+                usersMap[userNameClean] = {
+                    User: userNameClean,
+                    rounds: {
+                        'Round 1': 0,
+                        'Round 2': 0,
+                        'Round 3': parseFloat(entry.Global) || 0
+                    },
+                    missedRounds: []
+                };
+            } else {
+                usersMap[userNameClean].rounds['Round 3'] = parseFloat(entry.Global) || 0;
             }
         });
 
@@ -626,23 +744,28 @@ async function main() {
             if (!round2Participants.has(userName)) {
                 user.missedRounds.push('Round 2');
             }
+            if (!round3Participants.has(userName)) {
+                user.missedRounds.push('Round 3');
+            }
         });
-        
+
         // Convert to array and process
         let users = Object.values(usersMap);
         
         // Calculate scores and rankings
         handleTiedScores(users, 'Round 1');
         handleTiedScores(users, 'Round 2');
+        handleTiedScores(users, 'Round 3');
+
         calculateFinalScores(users);
         calculateRankingsAndTrends(users);
 
         // Filter out users with "Best 3 Scores" of 0
         users = users.filter(user => user['Best 3 Scores'] > 0);
         
-        // Sort by Total Score descending
-        users.sort((a, b) => b['Total Score'] - a['Total Score']);
-        
+        // Sort by Best 3 Scores descending
+        users.sort((a, b) => b['Best 3 Scores'] - a['Best 3 Scores']);
+
         // Store processed data globally
         globalData = users;
         
