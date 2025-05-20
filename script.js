@@ -657,9 +657,9 @@ function initializeDataTable(users) {
                     return `<div class="user-cell">${data} ${getTrendIndicator(row)}</div>`; 
                 } 
             },
-            { data: 'Round 1 Place', title: 'R1 Place', render: function(data, type, row) { return row.missedRounds && row.missedRounds.includes('Round 1') ? '❌' : data; } },
-            { data: 'Round 2 Place', title: 'R2 Place', render: function(data, type, row) { return row.missedRounds && row.missedRounds.includes('Round 2') ? '❌' : data; } },
-            { data: 'Round 3 Place', title: 'R3 Place', render: function(data, type, row) { return row.missedRounds && row.missedRounds.includes('Round 3') ? '❌' : data; } },
+            { data: 'Round 1 Place', title: 'R1 Place', render: function(data, type, row) { return row.missedRounds && row.missedRounds.includes('Round 1') ? '❌' : (data || 'N/A'); } },
+            { data: 'Round 2 Place', title: 'R2 Place', render: function(data, type, row) { return row.missedRounds && row.missedRounds.includes('Round 2') ? '❌' : (data || 'N/A'); } },
+            { data: 'Round 3 Place', title: 'R3 Place', render: function(data, type, row) { return row.missedRounds && row.missedRounds.includes('Round 3') ? '❌' : (data || 'N/A'); } },
             { data: 'Round 1 GP Score', title: 'GP1 Score', render: function(data, type, row) { return row.missedRounds && row.missedRounds.includes('Round 1') ? '❌' : (data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00'); } },
             { data: 'Round 2 GP Score', title: 'GP2 Score', render: function(data, type, row) { return row.missedRounds && row.missedRounds.includes('Round 2') ? '❌' : (data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00'); } },
             { data: 'Round 3 GP Score', title: 'GP3 Score', render: function(data, type, row) { return row.missedRounds && row.missedRounds.includes('Round 3') ? '❌' : (data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00'); } },
@@ -728,7 +728,7 @@ function setupCustomFilters() {
 async function main() {
     try {
         // Add debugging for script execution
-        console.log("Script initialization started");
+        console.debug("Script initialization started");
         
         // Check if jQuery and required libraries are loaded
         if (typeof $ === 'undefined') {
@@ -752,11 +752,11 @@ async function main() {
         }
         
         // Parse CSV data for GP rounds
-        console.log("Parsing CSV data...");
+        console.debug("Parsing CSV data...");
         const data1 = parseCSV(ranking1CSV);
         const data2 = parseCSV(ranking2CSV);
         const data3 = parseCSV(ranking3CSV);
-        console.log(`Found ${data1.length} entries in Round 1, ${data2.length} entries in Round 2, ${data3.length} entries in Round 3`);
+        console.debug(`Found ${data1.length} entries in Round 1, ${data2.length} entries in Round 2, ${data3.length} entries in Round 3`);
 
         // Sets to track participants by round
         const round1Participants = new Set(data1.map(entry => cleanUserName(entry.User)));
@@ -792,16 +792,29 @@ async function main() {
         });
 
         let users = Object.values(usersMap);
-        console.log(`Total unique participants: ${users.length}`);
+        console.debug(`Total unique participants: ${users.length}`);
         
         // Calculate GP scores and places for each round
-        handleTiedScores(users, 'Round 1');
-        handleTiedScores(users, 'Round 2');
-        handleTiedScores(users, 'Round 3');
+        ['Round 1', 'Round 2', 'Round 3'].forEach(roundKey => {
+            const activeParticipantsInRound = users.filter(u => !u.missedRounds.includes(roundKey));
+            if (activeParticipantsInRound.length > 0) {
+                handleTiedScores(activeParticipantsInRound, roundKey);
+            }
+        });
 
-        // Calculate 'Best 3 GP Scores', 'Bonus Points', and rank based on GP performance
+        // Ensure GP scores and Places are initialized for all users, even if they missed rounds.
         users.forEach(user => {
-            const r1Score = parseFloat(user['Round 1 GP Score']) || 0;
+            ['Round 1', 'Round 2', 'Round 3'].forEach(roundKey => {
+                if (user[roundKey + ' Place'] === undefined) {
+                    user[roundKey + ' Place'] = null; // Or a suitable placeholder like 'N/A' if preferred directly here
+                }
+                if (user[roundKey + ' GP Score'] === undefined) {
+                    user[roundKey + ' GP Score'] = 0;
+                }
+            });
+
+            // Calculate 'Best 3 GP Scores', 'Bonus Points'
+            const r1Score = parseFloat(user['Round 1 GP Score']) || 0; // Ensure parsing after defaulting
             const r2Score = parseFloat(user['Round 2 GP Score']) || 0;
             const r3Score = parseFloat(user['Round 3 GP Score']) || 0;
             user['Best 3 GP Scores'] = parseFloat(calculateBest3Scores([r1Score, r2Score, r3Score]).toFixed(2));
@@ -815,14 +828,14 @@ async function main() {
 
         // Integrate IOI Selection scores, calculate final total_score, and final position (user.position)
         // This also calculates intermediate positions like user.round1Position, user.ioiDay1Position etc.
-        console.log("Integrating IOI Selection scores...");
+        console.debug("Integrating IOI Selection scores...");
         integrateIOISelectionsIntoLeaderboard(users); 
         
         // Log stats about scores
         const usersWithPositiveTotal = users.filter(u => (u['total_score'] || 0) > 0);
         const usersWithPositiveBonus = users.filter(u => (u['Bonus Points'] || 0) > 0);
-        console.log(`Participants with positive total score: ${usersWithPositiveTotal.length}`);
-        console.log(`Participants with positive bonus: ${usersWithPositiveBonus.length}`);
+        console.debug(`Participants with positive total score: ${usersWithPositiveTotal.length}`);
+        console.debug(`Participants with positive bonus: ${usersWithPositiveBonus.length}`);
 
         // Calculate the main trend (rankDiff)
         users.forEach(user => {
@@ -840,10 +853,10 @@ async function main() {
         });
         
         globalData = users;
-        console.log("Initializing DataTable...");
+        console.debug("Initializing DataTable...");
         dataTable = initializeDataTable(users);
         updateSummaryStats(users);
-        console.log("Initialization complete");
+        console.debug("Initialization complete");
         
     } catch (error) {
         console.error('Error initializing data:', error);
@@ -855,13 +868,13 @@ async function main() {
 if (typeof jQuery !== 'undefined') {
     // If jQuery is already loaded, use standard document ready
     $(document).ready(function() {
-        console.log("jQuery document ready event fired");
+        console.debug("jQuery document ready event fired");
         setTimeout(main, 100); // Small delay to ensure DOM is fully processed
     });
 } else {
     // Fallback to standard DOM ready if jQuery isn't available
     document.addEventListener("DOMContentLoaded", function() {
-        console.log("DOM content loaded event fired");
+        console.debug("DOM content loaded event fired");
         setTimeout(function() {
             if (typeof main === 'function') {
                 main();
@@ -920,26 +933,44 @@ function integrateIOISelectionsIntoLeaderboard(users) {
         user.position = rankInfo ? rankInfo.rank : null;
     });
 
-    // GP round positions for position progression chart
-    const round1Users = users.filter(u => u.rounds['Round 1'] > 0);
-    round1Users.sort((a, b) => b.rounds['Round 1'] - a.rounds['Round 1']);
-    round1Users.forEach((u, idx) => { u.round1Position = idx + 1; });
-    
-    const round2Users = users.filter(u => u.rounds['Round 2'] > 0);
-    round2Users.sort((a, b) => b.rounds['Round 2'] - a.rounds['Round 2']);
-    round2Users.forEach((u, idx) => { u.round2Position = idx + 1; });
-    
-    const round3Users = users.filter(u => u.rounds['Round 3'] > 0);
-    round3Users.sort((a, b) => b.rounds['Round 3'] - a.rounds['Round 3']);
-    round3Users.forEach((u, idx) => { u.round3Position = idx + 1; });
+    // GP round positions for position progression chart (tie-aware)
+    const getNestedScore = (obj, path) => path.split('.').reduce((o, k) => (o && o[k] !== undefined) ? o[k] : undefined, obj);
+
+    ['Round 1', 'Round 2', 'Round 3'].forEach(roundName => {
+        const scorePath = `rounds.${roundName}`;
+        const positionProp = `${roundName.toLowerCase().replace(/\s+/g, '')}Position`; // e.g., round1Position
+        const positionRangeProp = `${positionProp}Range`; // e.g., round1PositionRange
+
+        // Create a temporary list of users who participated in the round, with their score for that round
+        const participantsForRoundRanking = users
+            .filter(u => !u.missedRounds.includes(roundName) && getNestedScore(u, scorePath) !== undefined)
+            .map(u => ({ User: u.User,  _internal_score_for_ranking: getNestedScore(u, scorePath) }));
+
+        if (participantsForRoundRanking.length > 0) {
+            handleTiedPositions(participantsForRoundRanking, '_internal_score_for_ranking', 'tempPos', 'tempPosRange');
+
+            // Merge the calculated positions back to the main users array
+            participantsForRoundRanking.forEach(rankedParticipant => {
+                const originalUser = users.find(u => u.User === rankedParticipant.User);
+                if (originalUser) {
+                    originalUser[positionProp] = rankedParticipant.tempPos;
+                    // originalUser[positionRangeProp] = rankedParticipant.tempPosRange; // Store if needed for display
+                }
+            });
+        }
+    });
     
     // Tie-aware ranking for IOI Selection Day 1
     const day1Participants = users.filter(u => u.ioi_selection_day1_score > 0);
-    handleTiedPositions(day1Participants, 'ioi_selection_day1_score', 'ioiDay1Position', 'ioiDay1PositionRange');
+    if (day1Participants.length > 0) {
+        handleTiedPositions(day1Participants, 'ioi_selection_day1_score', 'ioiDay1Position', 'ioiDay1PositionRange');
+    }
 
     // Tie-aware ranking for IOI Selection Day 2
     const day2Participants = users.filter(u => u.ioi_selection_day2_score > 0);
-    handleTiedPositions(day2Participants, 'ioi_selection_day2_score', 'ioiDay2Position', 'ioiDay2PositionRange');
+    if (day2Participants.length > 0) {
+        handleTiedPositions(day2Participants, 'ioi_selection_day2_score', 'ioiDay2Position', 'ioiDay2PositionRange');
+    }
 }
 
 function handleTiedPositions(users, scoreKey, posKey, rangeKey) {
