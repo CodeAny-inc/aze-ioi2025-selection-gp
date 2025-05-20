@@ -1,5 +1,9 @@
 let dataTable;
 let globalData = [];
+let maxIoiDay1Score = 0;
+let maxIoiDay2Score = 0;
+let positionChart = null;
+let trendProgressionChart = null;
 
 const ranking1CSV = `#;Username;User;gcd;trucks;ranking;Global;
 1;selection2025_1001;Ayxan Dəmirli Natiq;100;100;100;300;
@@ -195,7 +199,7 @@ const ranking3CSV = `#;Username;User;Selection2025_pita;Selection2025_square;Sel
 7;selection2025_3022;Nəsir Bəşirov;100.0;32.0;45.0;177.0
 8;selection2025_3024;Ömər Əliməmmədzadə;100.0;32.0;45.0;177.0
 9;selection2025_3002;Atabəy Rəcəbli;67.0;75.12;25.0;167.12
-10;selection2025_3043;Əli Suleymanzadə;100.0;48.29;0.0;148.29
+10;selection2025_3043;Əli Süleymanzadə;100.0;48.29;0.0;148.29
 11;selection2025_3006;Əhməd Qəmbərli;67.0;76.88;0.0;143.88
 12;selection2025_3028;Raul Cəfərli;100.0;14.0;25.0;139.0
 13;selection2025_3039;Vaqif Seyidzadə;100.0;14.0;25.0;139.0
@@ -246,6 +250,65 @@ const ranking3CSV = `#;Username;User;Selection2025_pita;Selection2025_square;Sel
 58;selection2025_3038;Leyla Hacızadə;0.0;0.0;0.0;0.0
 59;selection2025_3053;Amin Məmmədov;0.0;0.0;0.0;0.0
 60;selection2025_3060;Dummy Dummy;0.0;0.0;0.0;0.0`;
+
+const ioiDay1CSV = `,local_rank_position,Rank,Full name,,ID,Team,hack,permgame,rotate,Asia-Pacific Informatics Olympiad 2025,Global
+,1,72,Ayxan Dəmirli,,AZE_2,,78.1,22,54,154.1,154.1
+,2,301,Elvin İmanlı,,AZE_7,,25,12,16,53,53
+,3,301,Həsən Vəliyev,,AZE_3,,25,12,16,53,53
+,4,351,Əli Əliyev,,AZE_1,,25,12,13,50,50
+,5,379,Ahmad Qəmbərli,,AZE_5,,25,12,5,42,42
+,6,379,Elay Verdiyev,,AZE_27,,25,12,5,42,42
+,7,379,Rahidil Bayramlı,,AZE_10,,25,12,5,42,42
+,8,379,Rza Ağayev,,AZE_17,,25,12,5,42,42
+,9,419,Elvin Orucov,,AZE_6,,25,0,16,41,41
+,10,434,Raul Cəfərli,,AZE_13,,25,12,0,37,37
+,11,447,Nəsir Bəşirov,,AZE_8,,25,6,5,36,36
+,12,486,Tahir Əliyev,,AZE_4,,8,22,5,35,35
+,13,498,İsmayıl Məmmədov,,AZE_19,,25,0,5,30,30
+,14,530,Əkbər Əhmədov,,AZE_23,,8,12,5,25,25
+,15,548,Əli Süleymanzadə,,AZE_30,,8,0,16,24,24
+,16,548,Atilla Mustafa,,AZE_25,,8,0,16,24,24
+,17,548,Muhammedali Əhmədov,,AZE_12,,8,0,16,24,24
+,18,561,Cəbrayıl Namazlı,,AZE_14,,8,6,5,19,19
+,19,561,Fateh Əhmədzadə,,AZE_28,,8,6,5,19,19
+,20,637,Ömər Əliməmmədzadə,,AZE_26,,0,6,5,11,11
+,21,643,Bəxtiyar Nəcəfzadə,,AZE_24,,8,0,0,8,8
+,22,643,Qədir Məmmədov,,AZE_11,,8,0,0,8,8
+,23,643,Məhəmməd Axundlu,,AZE_21,,8,0,0,8,8
+,24,643,Mövlan Əmənov,,AZE_18,,8,0,0,8,8
+,25,678,Aytən İskəndərova,,AZE_22,,0,0,5,5,5
+,26,699,Əbülfəz Qəhrəmanov,,AZE_16,,0,0,0,0,0
+,27,699,Atabəy Rəcəbli,,AZE_9,,0,0,0,0,0
+,28,699,İslam Səfərli,,AZE_20,,0,0,0,0,0
+,29,699,Kənan Əfəndi,,AZE_15,,0,0,0,0,0
+,30,699,Turab Haqverdiyev,,AZE_29,,0,0,0,0,0`;
+
+const ioiDay2CSV = `Username,User,IOI2025_Selection_permwalk,P,IOI2025_Selection_bintree,P,IOI2025_Selection_graphonia,P,Global,P
+IOI2025_2002,Ayxan Dəmirli,100.0,,100.0,,100.0,,300.0,
+IOI2025_2003,Həsən Vəliyev,25.0,,100.0,,100.0,,225.0,
+IOI2025_2001,Əli Əliyev,25.0,,100.0,,43.0,,168.0,
+IOI2025_2007,Elvin İmanlı,25.0,,90.0,,43.0,,158.0,
+IOI2025_2005,Əhməd Qəmbərli,25.0,,90.0,,0.0,,115.0,
+IOI2025_2028,Fateh Əhmədzadə,60.0,,0.0,,15.0,,75.0,
+IOI2025_2004,Tahir Əliyev,25.0,,0.0,,43.0,,68.0,
+IOI2025_2008,Nəsir Bəşirov,25.0,,20.0,,20.0,,65.0,
+IOI2025_2013,Raul Cəfərli,25.0,,0.0,,26.0,,51.0,
+IOI2025_2011,Qədir Məmmədov,25.0,,0.0,,15.0,,40.0,
+IOI2025_2017,Rza Ağayev,25.0,,0.0,,15.0,,40.0,
+IOI2025_2010,Rahidil Bayramlı,25.0,,0.0,,0.0,,25.0,
+IOI2025_2012,Muhammedali Əhmədov,25.0,,0.0,,0.0,,25.0,
+IOI2025_2018,Mövlan Əmənov,25.0,,0.0,,0.0,,25.0,
+IOI2025_2027,Elay Verdiyev,25.0,,0.0,,0.0,,25.0,
+IOI2025_2006,Elvin Orucov,5.0,,10.0,,7.0,,22.0,
+IOI2025_2014,Cəbrayıl Namazlı,5.0,,0.0,,15.0,,20.0,
+IOI2025_2019,İsmayıl Məmmədov,5.0,,0.0,,15.0,,20.0,
+IOI2025_2025,Atilla Mustafa,5.0,,10.0,,0.0,,15.0,
+IOI2025_2030,Əli Süleymanzadə,5.0,,10.0,,0.0,,15.0,
+IOI2025_2020,İslam Səfərli,0.0,,0.0,,0.0,,0.0,
+IOI2025_2021,Məhəmməd Axundlu,0.0,,0.0,,0.0,,0.0,
+IOI2025_2022,Aytən İskəndərova,0.0,,0.0,,0.0,,0.0,
+IOI2025_2023,Əkbər Əhmədov,0.0,,0.0,,0.0,,0.0,
+IOI2025_2024,Bəxtiyar Nəcəfzadə,0.0,,0.0,,0.0,,0.0,`;
 
 // Parse CSV and return array of objects
 function parseCSV(csvString) {
@@ -347,61 +410,6 @@ function getRanking(users, scoreKey) {
     return ranking;
 }
 
-// Calculate rankings and trends based on previous best (Rounds 1 & 2) vs current best (all rounds)
-function calculateRankingsAndTrends(users) {
-    // Calculate previous best scores (Rounds 1 & 2)
-    users.forEach(user => {
-        const round1Score = parseFloat(user['Round 1 GP Score']) || 0;
-        const round2Score = parseFloat(user['Round 2 GP Score']) || 0;
-        user['Previous Best Scores'] = round1Score + round2Score; // Sum of Rounds 1 & 2
-    });
-
-    // Previous ranking based on Rounds 1 & 2
-    const previousRanking = getRanking(users, 'Previous Best Scores');
-    
-    // Current ranking based on Best 3 Scores (already calculated)
-    const currentRanking = getRanking(users, 'Best 3 Scores');
-    
-    // Create rank maps
-    const previousRankMap = {};
-    previousRanking.forEach(item => {
-        previousRankMap[item.user] = item.rank;
-    });
-
-    const currentRankMap = {};
-    currentRanking.forEach(item => {
-        currentRankMap[item.user] = item.rank;
-    });
-    
-    // Assign ranks and calculate rank difference
-    users.forEach(user => {
-        user.previousRank = previousRankMap[user.User] || null;
-        user.currentRank = currentRankMap[user.User] || null;
-        
-        if (user.previousRank && user.currentRank) {
-            user.rankDiff = user.previousRank - user.currentRank; // Positive means improvement
-        } else {
-            user.rankDiff = 0; // Default for users missing ranks
-        }
-    });
-}
-
-// Calculate final scores for users based on Round 1, Round 2 and Round 3 GP Scores
-function calculateFinalScores(users) {
-    users.forEach(user => {
-        const round1Score = parseFloat(user['Round 1 GP Score']) || 0;
-        const round2Score = parseFloat(user['Round 2 GP Score']) || 0;
-        const round3Score = parseFloat(user['Round 3 GP Score']) || 0;
-
-        user['Total Score'] = round1Score + round2Score + round3Score;
-        
-        const gpScores = [round1Score, round2Score, round3Score];
-        user['Best 3 Scores'] = parseFloat(calculateBest3Scores(gpScores).toFixed(2));
-        
-        user['Bonus Points'] = parseFloat((user['Best 3 Scores'] * 0.2).toFixed(2));
-    });
-}
-
 // Get trend indicator HTML
 function getTrendIndicator(user) {
     const rankDiff = user.rankDiff;
@@ -423,7 +431,7 @@ function getTrendIndicator(user) {
 
     return `
         <span class="badge ${className}" 
-            title="Previous rank: ${user.previousRank}, Current rank: ${user.currentRank}">
+            title="Rank change from ${user.trendCalculationPreviousRank || 'N/A'} (GP Best 3) to ${user.trendCalculationCurrentRank || 'N/A'} (Final)">
             <i class="fas fa-${icon}"></i> 
             ${text}
         </span>`;
@@ -455,6 +463,26 @@ function showUserDetails(userData) {
         .removeClass('bg-success bg-warning bg-danger')
         .addClass(getProgressBarClass(round3Progress));
     
+    // IOI Selection Day 1 Progress
+    const day1Score = userData.ioi_selection_day1_score || 0;
+    const day1Progress = maxIoiDay1Score > 0 ? (day1Score / maxIoiDay1Score) * 100 : 0;
+    $('.day1-progress')
+        .css('width', `${day1Progress}%`)
+        .attr('aria-valuenow', day1Progress)
+        .removeClass('bg-success bg-warning bg-danger')
+        .addClass(getProgressBarClass(day1Progress));
+    $('#day1Score').text(day1Score.toFixed(2));
+    
+    // IOI Selection Day 2 Progress
+    const day2Score = userData.ioi_selection_day2_score || 0;
+    const day2Progress = maxIoiDay2Score > 0 ? (day2Score / maxIoiDay2Score) * 100 : 0;
+    $('.day2-progress')
+        .css('width', `${day2Progress}%`)
+        .attr('aria-valuenow', day2Progress)
+        .removeClass('bg-success bg-warning bg-danger')
+        .addClass(getProgressBarClass(day2Progress));
+    $('#day2Score').text(day2Score.toFixed(2));
+    
     $('#round1Place').text(userData['Round 1 Place'] || 'N/A');
     $('#round1Score').text(userData['Round 1 GP Score'] ? userData['Round 1 GP Score'].toFixed(2) : '0.00');
     $('#round2Place').text(userData['Round 2 Place'] || 'N/A');
@@ -462,11 +490,22 @@ function showUserDetails(userData) {
     $('#round3Place').text(userData['Round 3 Place'] || 'N/A');
     $('#round3Score').text(userData['Round 3 GP Score'] ? userData['Round 3 GP Score'].toFixed(2) : '0.00');
     
-    $('#modalTotalScore').text(userData['Total Score'].toFixed(2));
-    $('#modalBestScores').text(userData['Best 3 Scores'].toFixed(2));
-    $('#modalBonusPoints').text(userData['Bonus Points'].toFixed(2));
+    $('#modalTotalScore').text(userData['total_score'] ? userData['total_score'].toFixed(2) : '0.00');
+    
+    // Safely access Best 3 Scores and Bonus Points
+    const best3Scores = typeof userData['Best 3 Scores'] === 'number' ? userData['Best 3 Scores'] : 0;
+    $('#modalBestScores').text(best3Scores.toFixed(2));
+    
+    const bonusPoints = typeof userData['Bonus Points'] === 'number' ? userData['Bonus Points'] : 0;
+    $('#modalBonusPoints').text(bonusPoints.toFixed(2));
     
     $('#rankingAnalysis').html(generateRankingAnalysis(userData));
+    
+    // Generate position progression chart
+    generatePositionChart(userData);
+
+    // Generate trend progression chart
+    generateTrendProgressionChart(userData);
     
     const modal = new bootstrap.Modal(document.getElementById('userDetailsModal'));
     modal.show();
@@ -474,30 +513,93 @@ function showUserDetails(userData) {
 
 // Generate ranking analysis HTML
 function generateRankingAnalysis(userData) {
-    const rankChange = userData.rankDiff || 0;
+    const rankDiff = userData.rankDiff;
     let analysisHtml = '<div class="analysis-content">';
     
-    if (rankChange > 0) {
+    if (rankDiff > 0) {
         analysisHtml += `
             <div class="alert alert-success">
                 <i class="fas fa-arrow-up me-2"></i>
-                Moved up ${rankChange} position(s) 
-                (from rank ${userData.previousRank} to ${userData.currentRank})
+                Moved up ${rankDiff} position(s) 
+                (from rank ${userData.trendCalculationPreviousRank || 'N/A'} after GP rounds to ${userData.trendCalculationCurrentRank || 'N/A'} final)
             </div>`;
-    } else if (rankChange < 0) {
+    } else if (rankDiff < 0) {
         analysisHtml += `
             <div class="alert alert-danger">
                 <i class="fas fa-arrow-down me-2"></i>
-                Moved down ${Math.abs(rankChange)} position(s) 
-                (from rank ${userData.previousRank} to ${userData.currentRank})
+                Moved down ${Math.abs(rankDiff)} position(s) 
+                (from rank ${userData.trendCalculationPreviousRank || 'N/A'} after GP rounds to ${userData.trendCalculationCurrentRank || 'N/A'} final)
             </div>`;
-    } else {
+    } else if (userData.trendCalculationPreviousRank !== null && userData.trendCalculationCurrentRank !== null){
         analysisHtml += `
             <div class="alert alert-info">
                 <i class="fas fa-minus me-2"></i>
-                Position unchanged at rank ${userData.currentRank}
+                Position unchanged at rank ${userData.trendCalculationCurrentRank || 'N/A'}
+                 (was ${userData.trendCalculationPreviousRank || 'N/A'} after GP rounds)
+            </div>`;
+    } else {
+         analysisHtml += `
+            <div class="alert alert-secondary">
+                <i class="fas fa-info-circle me-2"></i>
+                Trend N/A (Rank after GP: ${userData.trendCalculationPreviousRank || 'N/A'}, Final Rank: ${userData.trendCalculationCurrentRank || 'N/A'})
             </div>`;
     }
+    
+    // Add IOI Selection score breakdown
+    analysisHtml += `
+        <div class="alert alert-light mt-3">
+            <h6 class="mb-2">IOI Selection Breakdown</h6>
+            <table class="table table-sm">
+                <tr>
+                    <td>Bonus Points:</td>
+                    <td class="text-end">${userData['Bonus Points'].toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>IOI Selection Day 1:</td>
+                    <td class="text-end">${(userData.ioi_selection_day1_score || 0).toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>IOI Selection Day 2:</td>
+                    <td class="text-end">${(userData.ioi_selection_day2_score || 0).toFixed(2)}</td>
+                </tr>
+                <tr class="fw-bold">
+                    <td>Total Score:</td>
+                    <td class="text-end">${(userData.total_score || 0).toFixed(2)}</td>
+                </tr>
+            </table>
+        </div>`;
+    
+    // Add position breakdown
+    analysisHtml += `
+        <div class="alert alert-light mt-3">
+            <h6 class="mb-2">Position History</h6>
+            <table class="table table-sm">
+                ${userData.round1Position ? `<tr>
+                    <td>Round 1 Position:</td>
+                    <td class="text-end">${userData.round1Position}</td>
+                </tr>` : ''}
+                ${userData.round2Position ? `<tr>
+                    <td>Round 2 Position:</td>
+                    <td class="text-end">${userData.round2Position}</td>
+                </tr>` : ''}
+                ${userData.round3Position ? `<tr>
+                    <td>Round 3 Position:</td>
+                    <td class="text-end">${userData.round3Position}</td>
+                </tr>` : ''}
+                ${userData.ioiDay1Position ? `<tr>
+                    <td>IOI Selection Day 1 Position:</td>
+                    <td class="text-end">${userData.ioiDay1Position}</td>
+                </tr>` : ''}
+                ${userData.ioiDay2Position ? `<tr>
+                    <td>IOI Selection Day 2 Position:</td>
+                    <td class="text-end">${userData.ioiDay2Position}</td>
+                </tr>` : ''}
+                <tr class="fw-bold">
+                    <td>Final Position:</td>
+                    <td class="text-end">${userData.position}</td>
+                </tr>
+            </table>
+        </div>`;
     
     return analysisHtml + '</div>';
 }
@@ -512,107 +614,37 @@ function getProgressBarClass(score) {
 // Update summary statistics based on Total Score
 function updateSummaryStats(users) {
     $('#totalParticipants').text(users.length);
-    $('#topScore').text(Math.max(...users.map(u => u['Best 3 Scores'])).toFixed(2));
-    $('#avgScore').text((users.reduce((sum, u) => sum + u['Best 3 Scores'], 0) / users.length).toFixed(2));
-    $('#perfectScores').text(users.filter(u => u['Best 3 Scores'] >= 200).length);
+    $('#topScore').text(Math.max(...users.map(u => u['total_score'] || 0)).toFixed(2));
+    $('#avgScore').text((users.reduce((sum, u) => sum + (u['total_score'] || 0), 0) / users.length).toFixed(2));
 }
 
-// Initialize DataTable without Final Score
+// Initialize DataTable
 function initializeDataTable(users) {
     return $('#scoresTable').DataTable({
         data: users,
         columns: [
             { 
-                data: 'User',
-                title: 'Participant',
-                render: function(data, type, row) {
-                    return `<div class="user-cell">${data}</div>`;
-                }
+                data: 'User', 
+                title: 'Participant', 
+                render: function(data, type, row) { 
+                    return `<div class="user-cell">${data} ${getTrendIndicator(row)}</div>`; 
+                } 
             },
-            { 
-                data: 'Round 1 Place', 
-                title: 'R1 Place',
-                render: function(data, type, row) {
-                    return row.missedRounds.includes('Round 1') ? '❌' : data;
-                }
-            },
-            { 
-                data: 'Round 2 Place', 
-                title: 'R2 Place',
-                render: function(data, type, row) {
-                    return row.missedRounds.includes('Round 2') ? '❌' : data;
-                }
-            },
-            {
-                data: 'Round 3 Place',
-                title: 'R3 Place',
-                render: function(data, type, row) {
-                    return row.missedRounds.includes('Round 3') ? '❌' : data;
-                }
-            },
-            { 
-                data: 'Round 1 GP Score',
-                title: 'GP1 Score',
-                render: function(data, type, row) {
-                    return row.missedRounds.includes('Round 1') ? '❌' : (data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00');
-                }
-            },
-            { 
-                data: 'Round 2 GP Score',
-                title: 'GP2 Score',
-                render: function(data, type, row) {
-                    return row.missedRounds.includes('Round 2') ? '❌' : (data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00');
-                }
-            },
-            {
-                data: 'Round 3 GP Score',
-                title: 'GP3 Score',
-                render: function(data, type, row) {
-                    return row.missedRounds.includes('Round 3') ? '❌' : (data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00');
-                }
-            },
-            { 
-                data: 'Total Score',
-                title: 'Total',
-                render: function(data) {
-                    return data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00';
-                }
-            },
-            { 
-                data: 'Best 3 Scores',
-                title: 'Best 3',
-                render: function(data) {
-                    return data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00';
-                }
-            },
-            { 
-                data: 'Bonus Points',
-                title: 'Bonus',
-                render: function(data) {
-                    return data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00';
-                }
-            },
-            { 
-                data: 'rankDiff',
-                title: 'Position Change',
-                render: function(data, type, row) {
-                    return getTrendIndicator(row);
-                }
-            },
-            {
-                data: null,
-                title: 'Details',
-                orderable: false,
-                render: function(data, type, row) {
-                    // Escape single quotes to prevent breaking the onclick attribute
-                    const rowData = JSON.stringify(row).replace(/'/g, "\\'");
-                    return `<button class="btn btn-sm btn-info" onclick='showUserDetails(${rowData})'>
-                        <i class="fas fa-info-circle"></i>
-                    </button>`;
-                }
-            }
+            { data: 'Round 1 Place', title: 'R1 Place', render: function(data, type, row) { return row.missedRounds && row.missedRounds.includes('Round 1') ? '❌' : data; } },
+            { data: 'Round 2 Place', title: 'R2 Place', render: function(data, type, row) { return row.missedRounds && row.missedRounds.includes('Round 2') ? '❌' : data; } },
+            { data: 'Round 3 Place', title: 'R3 Place', render: function(data, type, row) { return row.missedRounds && row.missedRounds.includes('Round 3') ? '❌' : data; } },
+            { data: 'Round 1 GP Score', title: 'GP1 Score', render: function(data, type, row) { return row.missedRounds && row.missedRounds.includes('Round 1') ? '❌' : (data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00'); } },
+            { data: 'Round 2 GP Score', title: 'GP2 Score', render: function(data, type, row) { return row.missedRounds && row.missedRounds.includes('Round 2') ? '❌' : (data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00'); } },
+            { data: 'Round 3 GP Score', title: 'GP3 Score', render: function(data, type, row) { return row.missedRounds && row.missedRounds.includes('Round 3') ? '❌' : (data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00'); } },
+            { data: 'Bonus Points', title: 'Bonus', render: function(data) { return data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00'; } },
+            { data: 'ioi_selection_day1_score', title: 'IOI Selection Day 1', render: function(data) { return data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00'; } },
+            { data: 'ioi_selection_day2_score', title: 'IOI Selection Day 2', render: function(data) { return data !== undefined && data !== null ? parseFloat(data).toFixed(2) : '0.00'; } },
+            { data: 'total_score', title: 'Total Score', render: function(data) { return data !== undefined && data !== null ? `<b>${parseFloat(data).toFixed(2)}</b>` : '0.00'; } },
+            { data: 'position', title: 'Position' },
+            { data: 'rankDiff', title: 'Trend', render: function(data, type, row) { return getTrendIndicator(row); } },
+            { data: null, title: 'Details', orderable: false, render: function(data, type, row) { const rowData = JSON.stringify(row).replace(/'/g, "\\'"); return `<button class="btn btn-sm btn-info" onclick='showUserDetails(${rowData})'><i class="fas fa-info-circle"></i></button>`; } }
         ],
-        order: [[8, 'desc']], // Sort by Best 3 Scores
+        order: [[10, 'desc']], // Sort by Total Score
         pageLength: 10,
         responsive: true,
         language: {
@@ -668,7 +700,7 @@ function setupCustomFilters() {
 // Main initialization function
 async function main() {
     try {
-        // Parse CSV data
+        // Parse CSV data for GP rounds
         const data1 = parseCSV(ranking1CSV);
         const data2 = parseCSV(ranking2CSV);
         const data3 = parseCSV(ranking3CSV);
@@ -678,98 +710,75 @@ async function main() {
         const round2Participants = new Set(data2.map(entry => cleanUserName(entry.User)));        
         const round3Participants = new Set(data3.map(entry => cleanUserName(entry.User)));
         
-        // Process and merge data
         const usersMap = {};
         
-        // Process Round 1
+        // Process Round 1, 2, 3 data into usersMap (simplified for brevity)
         data1.forEach(entry => {
             const userNameClean = cleanUserName(entry.User);
-            if (!usersMap[userNameClean]) {
-                usersMap[userNameClean] = {
-                    User: userNameClean,
-                    rounds: {
-                        'Round 1': parseFloat(entry.Global) || 0,
-                        'Round 2': 0,                        
-                        'Round 3': 0,
-                    },
-                    missedRounds: []
-                };
-            } else {
-                usersMap[userNameClean].rounds['Round 1'] = parseFloat(entry.Global) || 0;
-            }
+            if (!usersMap[userNameClean]) usersMap[userNameClean] = { User: userNameClean, rounds: {}, missedRounds: [] };
+            usersMap[userNameClean].rounds['Round 1'] = parseFloat(entry.Global) || 0;
         });
-        
-        // Process Round 2
         data2.forEach(entry => {
             const userNameClean = cleanUserName(entry.User);
-            if (!usersMap[userNameClean]) {
-                usersMap[userNameClean] = {
-                    User: userNameClean,
-                    rounds: {
-                        'Round 1': 0,
-                        'Round 2': parseFloat(entry.Global) || 0,
-                        'Round 3': 0
-                    },
-                    missedRounds: []
-                };
-            } else {
-                usersMap[userNameClean].rounds['Round 2'] = parseFloat(entry.Global) || 0;
-            }
+            if (!usersMap[userNameClean]) usersMap[userNameClean] = { User: userNameClean, rounds: {}, missedRounds: [] };
+            usersMap[userNameClean].rounds['Round 2'] = parseFloat(entry.Global) || 0;
         });
-
-        // Process Round 3
         data3.forEach(entry => {
             const userNameClean = cleanUserName(entry.User);
-            if (!usersMap[userNameClean]) {
-                usersMap[userNameClean] = {
-                    User: userNameClean,
-                    rounds: {
-                        'Round 1': 0,
-                        'Round 2': 0,
-                        'Round 3': parseFloat(entry.Global) || 0
-                    },
-                    missedRounds: []
-                };
-            } else {
-                usersMap[userNameClean].rounds['Round 3'] = parseFloat(entry.Global) || 0;
-            }
+            if (!usersMap[userNameClean]) usersMap[userNameClean] = { User: userNameClean, rounds: {}, missedRounds: [] };
+            usersMap[userNameClean].rounds['Round 3'] = parseFloat(entry.Global) || 0;
         });
 
-        // Identify missing participants
         Object.values(usersMap).forEach(user => {
-            const userName = user.User;
-            if (!round1Participants.has(userName)) {
-                user.missedRounds.push('Round 1');
-            }
-            if (!round2Participants.has(userName)) {
-                user.missedRounds.push('Round 2');
-            }
-            if (!round3Participants.has(userName)) {
-                user.missedRounds.push('Round 3');
-            }
+            user.rounds['Round 1'] = user.rounds['Round 1'] || 0;
+            user.rounds['Round 2'] = user.rounds['Round 2'] || 0;
+            user.rounds['Round 3'] = user.rounds['Round 3'] || 0;
+            if (!round1Participants.has(user.User)) user.missedRounds.push('Round 1');
+            if (!round2Participants.has(user.User)) user.missedRounds.push('Round 2');
+            if (!round3Participants.has(user.User)) user.missedRounds.push('Round 3');
         });
 
-        // Convert to array and process
         let users = Object.values(usersMap);
         
-        // Calculate scores and rankings
+        // Calculate GP scores and places for each round
         handleTiedScores(users, 'Round 1');
         handleTiedScores(users, 'Round 2');
         handleTiedScores(users, 'Round 3');
 
-        calculateFinalScores(users);
-        calculateRankingsAndTrends(users);
+        // Calculate 'Best 3 GP Scores', 'Bonus Points', and rank based on GP performance
+        users.forEach(user => {
+            const r1Score = parseFloat(user['Round 1 GP Score']) || 0;
+            const r2Score = parseFloat(user['Round 2 GP Score']) || 0;
+            const r3Score = parseFloat(user['Round 3 GP Score']) || 0;
+            user['Best 3 GP Scores'] = parseFloat(calculateBest3Scores([r1Score, r2Score, r3Score]).toFixed(2));
+            user['Bonus Points'] = parseFloat((user['Best 3 GP Scores'] * 0.2).toFixed(2));
+        });
 
-        // Filter out users with "Best 3 Scores" of 0
-        users = users.filter(user => user['Best 3 Scores'] > 0);
+        const gpRanking = getRanking(users, 'Best 3 GP Scores');
+        const gpRankMap = {};
+        gpRanking.forEach(item => { gpRankMap[item.user] = item.rank; });
+        users.forEach(user => { user.rankAfterGP = gpRankMap[user.User]; });
+
+        // Integrate IOI Selection scores, calculate final total_score, and final position (user.position)
+        // This also calculates intermediate positions like user.round1Position, user.ioiDay1Position etc.
+        integrateIOISelectionsIntoLeaderboard(users); 
+
+        // Calculate the main trend (rankDiff)
+        users.forEach(user => {
+            const rankBeforeIOI = user.rankAfterGP;
+            const finalRank = user.position; // user.position is the final rank from integrateIOISelectionsIntoLeaderboard
+
+            user.trendCalculationPreviousRank = rankBeforeIOI;
+            user.trendCalculationCurrentRank = finalRank;
+
+            if (typeof rankBeforeIOI === 'number' && typeof finalRank === 'number') {
+                user.rankDiff = rankBeforeIOI - finalRank; // Positive means rank improved
+            } else {
+                user.rankDiff = null; // Handle cases where one rank might be missing (e.g. 0 score throughout GP)
+            }
+        });
         
-        // Sort by Best 3 Scores descending
-        users.sort((a, b) => b['Best 3 Scores'] - a['Best 3 Scores']);
-
-        // Store processed data globally
         globalData = users;
-        
-        // Initialize table and update stats
         dataTable = initializeDataTable(users);
         updateSummaryStats(users);
         
@@ -779,6 +788,357 @@ async function main() {
     }
 }
 
+// --- Parse and integrate IOI Selection Day 1 & 2 as separate competitions ---
+function parseIOISelections() {
+    const day1 = Papa.parse(ioiDay1CSV, { header: true, skipEmptyLines: true }).data;
+    const day2 = Papa.parse(ioiDay2CSV, { header: true, skipEmptyLines: true }).data;
+    const ioiDay1Map = {};
+    day1.forEach(row => {
+        const fullName = row['Full name'] ? row['Full name'].trim() : '';
+        if (!fullName) return;
+        const cleaned = cleanUserName(fullName);
+        const normName = normalizeString(cleaned);
+        ioiDay1Map[normName] = parseFloat(row.Global) || 0;
+    });
+    const ioiDay2Map = {};
+    day2.forEach(row => {
+        const userName = row.User ? row.User.trim() : '';
+        if (!userName) return;
+        const cleaned = cleanUserName(userName);
+        const normName = normalizeString(cleaned);
+        ioiDay2Map[normName] = parseFloat(row.Global) || 0;
+    });
+    
+    // Calculate maximum scores for progress bars
+    maxIoiDay1Score = Math.max(...Object.values(ioiDay1Map));
+    maxIoiDay2Score = Math.max(...Object.values(ioiDay2Map));
+    
+    return { ioiDay1Map, ioiDay2Map };
+}
+
+// --- Integrate IOI selection scores into main leaderboard ---
+function integrateIOISelectionsIntoLeaderboard(users) {
+    const { ioiDay1Map, ioiDay2Map } = parseIOISelections();
+    users.forEach(user => {
+        const normName = normalizeString(user.User);
+        user.ioi_selection_day1_score = ioiDay1Map[normName] || 0;
+        user.ioi_selection_day2_score = ioiDay2Map[normName] || 0;
+        user.total_score = (user['Bonus Points'] || 0) + user.ioi_selection_day1_score + user.ioi_selection_day2_score;
+    });
+    // Final overall ranking
+    const finalOverallRanking = getRanking(users, 'total_score');
+    const finalRankMap = {};
+    finalOverallRanking.forEach(item => { finalRankMap[item.user] = item.rank; });
+    users.forEach(user => { user.position = finalRankMap[user.User]; });
+
+    // GP round positions for position progression chart
+    const round1Users = users.filter(u => u.rounds['Round 1'] > 0);
+    round1Users.sort((a, b) => b.rounds['Round 1'] - a.rounds['Round 1']);
+    round1Users.forEach((u, idx) => { u.round1Position = idx + 1; });
+    const round2Users = users.filter(u => u.rounds['Round 2'] > 0);
+    round2Users.sort((a, b) => b.rounds['Round 2'] - a.rounds['Round 2']);
+    round2Users.forEach((u, idx) => { u.round2Position = idx + 1; });
+    const round3Users = users.filter(u => u.rounds['Round 3'] > 0);
+    round3Users.sort((a, b) => b.rounds['Round 3'] - a.rounds['Round 3']);
+    round3Users.forEach((u, idx) => { u.round3Position = idx + 1; });
+    
+    // Tie-aware ranking for IOI Selection Day 1 and Day 2
+    // Tie-aware ranking for IOI Selection Day 1
+    const day1Participants = users.filter(u => u.ioi_selection_day1_score > 0);
+    handleTiedPositions(day1Participants, 'ioi_selection_day1_score', 'ioiDay1Position', 'ioiDay1PositionRange');
+
+    // Tie-aware ranking for IOI Selection Day 2
+    const day2Participants = users.filter(u => u.ioi_selection_day2_score > 0);
+    handleTiedPositions(day2Participants, 'ioi_selection_day2_score', 'ioiDay2Position', 'ioiDay2PositionRange');
+}
+
+function handleTiedPositions(users, scoreKey, posKey, rangeKey) {
+    const groups = {};
+    users.forEach(u => {
+        const score = u[scoreKey];
+        if (!groups[score]) groups[score] = [];
+        groups[score].push(u);
+    });
+    let currentPlace = 1;
+    Object.keys(groups).map(Number).sort((a,b) => b - a).forEach(score => {
+        const grp = groups[score];
+        const count = grp.length;
+        const start = currentPlace;
+        const end = currentPlace + count - 1;
+        const range = count > 1 ? `${start}-${end}` : `${start}`;
+        grp.forEach(u => {
+            u[posKey] = start;
+            u[rangeKey] = range;
+        });
+        currentPlace += count;
+    });
+}
+
 $(document).ready(function() {
     main();
 });
+
+// Helper to normalize strings (remove diacritics and lowercase)
+function normalizeString(str) {
+    return str
+        .replace(/[əƏ]/g, 'a')  // Replace schwa with 'a' for matching
+        .normalize('NFD')               // decompose combined letters
+        .replace(/[\u0000-\u001F\u007F-\u007F]/g, '') // remove control chars
+        .replace(/[\u0300-\u036f]/g, '') // remove diacritics
+        .toLowerCase();
+}
+
+function generatePositionChart(userData) {
+    // Get positions from user data
+    const positions = [
+        userData.round1Position || null,
+        userData.round2Position || null,
+        userData.round3Position || null,
+        userData.ioiDay1Position || null,
+        userData.ioiDay2Position || null,
+        userData.position
+    ];
+    
+    const labels = ['Round 1', 'Round 2', 'Round 3', 'IOI Day 1', 'IOI Day 2', 'Final'];
+    
+    const validPositions = [];
+    const validLabels = [];
+    
+    positions.forEach((pos, index) => {
+        if (pos !== null && pos !== undefined) {
+            validPositions.push(pos);
+            validLabels.push(labels[index]);
+        }
+    });
+
+    const canvas = document.getElementById('positionChart');
+    const chartContainer = canvas.closest('.chart-container');
+
+    // Destroy previous chart if it exists and is a valid Chart instance
+    if (window.positionChart && typeof window.positionChart.destroy === 'function') {
+        window.positionChart.destroy();
+        window.positionChart = null; 
+    }
+
+    // If no valid positions, show a message in the container and hide canvas
+    if (validPositions.length === 0) {
+        canvas.style.display = 'none'; 
+        
+        let noDataMessageEl = chartContainer.querySelector('.no-data-message');
+        if (!noDataMessageEl) {
+            noDataMessageEl = document.createElement('div');
+            noDataMessageEl.className = 'text-center text-muted no-data-message';
+            chartContainer.appendChild(noDataMessageEl);
+        }
+        noDataMessageEl.textContent = 'No position data available';
+        noDataMessageEl.style.display = 'block';
+        return;
+    }
+
+    // If data exists, ensure canvas is visible and hide/remove no-data message
+    canvas.style.display = 'block';
+    const existingNoDataMessage = chartContainer.querySelector('.no-data-message');
+    if (existingNoDataMessage) {
+        existingNoDataMessage.style.display = 'none'; 
+    }
+
+    const ctx = canvas.getContext('2d');
+    window.positionChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: validLabels,
+            datasets: [{
+                label: 'Position',
+                data: validPositions,
+                backgroundColor: 'rgba(79, 70, 229, 0.2)',
+                borderColor: 'rgba(79, 70, 229, 1)',
+                borderWidth: 2,
+                pointBackgroundColor: 'rgba(79, 70, 229, 1)',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    reverse: true, 
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: 'Position',
+                        color: '#a0aec0'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#a0aec0',
+                        callback: function(value) {
+                            if (value % 1 === 0) { 
+                                return value;
+                            }
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#a0aec0'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                    titleColor: '#fff',
+                    bodyColor: '#a0aec0',
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    borderWidth: 1,
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            const roundIndex = context.dataIndex;
+                            const roundLabel = validLabels[roundIndex];
+                            let score = 0;
+                            
+                            if (roundLabel === 'Round 1') {
+                                score = userData['Round 1 GP Score'] || 0;
+                            } else if (roundLabel === 'Round 2') {
+                                score = userData['Round 2 GP Score'] || 0;
+                            } else if (roundLabel === 'Round 3') {
+                                score = userData['Round 3 GP Score'] || 0;
+                            } else if (roundLabel === 'IOI Day 1') {
+                                score = userData.ioi_selection_day1_score || 0;
+                            } else if (roundLabel === 'IOI Day 2') {
+                                score = userData.ioi_selection_day2_score || 0;
+                            } else if (roundLabel === 'Final') {
+                                score = userData.total_score || 0;
+                            }
+                            
+                            return [
+                                `Position: ${context.raw}`,
+                                `Score: ${score.toFixed(2)}`
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function generateTrendProgressionChart(userData) {
+    const stages = [
+        { prev: userData.round1Position, current: userData.round2Position, label: 'R2 vs R1' },
+        { prev: userData.round2Position, current: userData.round3Position, label: 'R3 vs R2' },
+        { prev: userData.round3Position, current: userData.ioiDay1Position, label: 'IOI D1 vs R3' },
+        { prev: userData.ioiDay1Position, current: userData.ioiDay2Position, label: 'IOI D2 vs IOI D1' },
+        { prev: userData.ioiDay2Position, current: userData.position, label: 'Final vs IOI D2' }
+    ];
+
+    const chartLabels = [];
+    const chartData = [];
+
+    stages.forEach(stage => {
+        if (stage.prev !== null && stage.prev !== undefined && stage.current !== null && stage.current !== undefined) {
+            chartLabels.push(stage.label);
+            chartData.push(stage.prev - stage.current); // Positive value means rank improved
+        }
+    });
+
+    const canvas = document.getElementById('trendProgressionChart');
+    const chartContainer = canvas.closest('.chart-container');
+
+    if (window.trendProgressionChart && typeof window.trendProgressionChart.destroy === 'function') {
+        window.trendProgressionChart.destroy();
+        window.trendProgressionChart = null;
+    }
+
+    if (chartData.length === 0) {
+        canvas.style.display = 'none';
+        let noDataMessageEl = chartContainer.querySelector('.no-data-message-trend');
+        if (!noDataMessageEl) {
+            noDataMessageEl = document.createElement('div');
+            noDataMessageEl.className = 'text-center text-muted no-data-message-trend';
+            chartContainer.appendChild(noDataMessageEl);
+        }
+        noDataMessageEl.textContent = 'No trend progression data available';
+        noDataMessageEl.style.display = 'block';
+        return;
+    }
+
+    canvas.style.display = 'block';
+    const existingNoDataMessage = chartContainer.querySelector('.no-data-message-trend');
+    if (existingNoDataMessage) {
+        existingNoDataMessage.style.display = 'none';
+    }
+
+    const ctx = canvas.getContext('2d');
+    window.trendProgressionChart = new Chart(ctx, {
+        type: 'bar', // Using bar chart for deltas might be clearer
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: 'Rank Change',
+                data: chartData,
+                backgroundColor: chartData.map(value => value >= 0 ? 'rgba(75, 192, 192, 0.6)' : 'rgba(255, 99, 132, 0.6)'),
+                borderColor: chartData.map(value => value >= 0 ? 'rgba(75, 192, 192, 1)' : 'rgba(255, 99, 132, 1)'),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Rank Change (Positive = Improved)',
+                        color: '#a0aec0'
+                    },
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#a0aec0' }
+                },
+                x: {
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#a0aec0' }
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                    titleColor: '#fff',
+                    bodyColor: '#a0aec0',
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    borderWidth: 1,
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += context.parsed.y > 0 ? `+${context.parsed.y}` : context.parsed.y;
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+

@@ -109,9 +109,11 @@
                         <th>GP1 Score</th>
                         <th>GP2 Score</th>
                         <th>GP3 Score</th>
-                        <th>Total</th>
-                        <th>Best 3</th>
                         <th>Bonus</th>
+                        <th>IOI Selection Day 1</th>
+                        <th>IOI Selection Day 2</th>
+                        <th>Total Score</th>
+                        <th>Position</th>
                         <th>Trend</th>
                         <th>Details</th>
                     </tr>
@@ -190,6 +192,34 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="performance-card">
+                                <h6>IOI Selection Day 1</h6>
+                                <div class="progress">
+                                    <div class="progress-bar day1-progress" role="progressbar"></div>
+                                </div>
+                                <div class="score-details">
+                                    <div class="score-item">
+                                        <div class="score-label">Score</div>
+                                        <div id="day1Score" class="score-value"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="performance-card">
+                                <h6>IOI Selection Day 2</h6>
+                                <div class="progress">
+                                    <div class="progress-bar day2-progress" role="progressbar"></div>
+                                </div>
+                                <div class="score-details">
+                                    <div class="score-item">
+                                        <div class="score-label">Score</div>
+                                        <div id="day2Score" class="score-value"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Overall Statistics -->
@@ -223,10 +253,27 @@
                         </div>
                     </div>
                   
+                    <!-- Ranking Analysis -->
                     <div class="ranking-analysis mt-4">
                         <h6 class="section-title">Ranking Analysis</h6>
                         <div id="rankingAnalysis" class="analysis-text">
                             
+                        </div>
+                    </div>
+                    
+                    <!-- Ranking Progression Chart -->
+                    <div class="ranking-progression mt-4">
+                        <h6 class="section-title">Position Progression</h6>
+                        <div class="chart-container">
+                            <canvas id="positionChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Trend Progression Chart -->
+                    <div class="trend-progression-chart mt-4">
+                        <h6 class="section-title">Rank Fluctuation (Trend)</h6>
+                        <div class="chart-container">
+                            <canvas id="trendProgressionChart"></canvas>
                         </div>
                     </div>
                 
@@ -245,6 +292,7 @@
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script src="script.js"></script>
 </body>
