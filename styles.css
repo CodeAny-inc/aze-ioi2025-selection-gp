@@ -7,6 +7,7 @@
     --warning: #f59e0b;
     --danger: #ef4444;
     --info: #0ea5e9;
+    --purple: #8b5cf6;
     --light: #f8fafc;
     --dark: #1e293b;
     --darker: #0f172a;
@@ -393,3 +394,11 @@ body {
 .modal.show .modal-dialog {
     transform: translateY(0);
 }
+
+/* Stats Icon Backgrounds */
+.bg-primary { background-color: var(--primary) !important; }
+.bg-success { background-color: var(--success) !important; }
+.bg-warning { background-color: var(--warning) !important; }
+.bg-danger { background-color: var(--danger) !important; }
+.bg-info { background-color: var(--info) !important; }
+.bg-purple { background-color: var(--purple) !important; }

@@ -613,15 +613,22 @@ function getProgressBarClass(score) {
 
 // Update summary statistics based on Total Score
 function updateSummaryStats(users) {
-    $('#totalParticipants').text(users.length);
+    const participantsWithPositiveBonus = users.filter(u => (u['Bonus Points'] || 0) > 0).length;
+    const participantsWithPositiveTotal = users.filter(u => (u['total_score'] || 0) > 0).length;
+    
+    $('#totalParticipants').text(participantsWithPositiveBonus);
+    $('#totalPositiveScore').text(participantsWithPositiveTotal);
     $('#topScore').text(Math.max(...users.map(u => u['total_score'] || 0)).toFixed(2));
-    $('#avgScore').text((users.reduce((sum, u) => sum + (u['total_score'] || 0), 0) / users.length).toFixed(2));
+    $('#avgScore').text((users.reduce((sum, u) => sum + (u['total_score'] || 0), 0) / users.filter(u => (u['total_score'] || 0) > 0).length).toFixed(2));
 }
 
 // Initialize DataTable
 function initializeDataTable(users) {
+    // Filter only users with positive total scores
+    const filteredUsers = users.filter(user => (user['total_score'] || 0) > 0);
+    
     return $('#scoresTable').DataTable({
-        data: users,
+        data: filteredUsers,
         columns: [
             { 
                 data: 'User', 
@@ -825,24 +832,30 @@ function integrateIOISelectionsIntoLeaderboard(users) {
         user.ioi_selection_day2_score = ioiDay2Map[normName] || 0;
         user.total_score = (user['Bonus Points'] || 0) + user.ioi_selection_day1_score + user.ioi_selection_day2_score;
     });
-    // Final overall ranking
-    const finalOverallRanking = getRanking(users, 'total_score');
-    const finalRankMap = {};
-    finalOverallRanking.forEach(item => { finalRankMap[item.user] = item.rank; });
-    users.forEach(user => { user.position = finalRankMap[user.User]; });
+    
+    // Final overall ranking - only consider participants with positive total score
+    const participantsWithScore = users.filter(u => (u['total_score'] || 0) > 0);
+    const finalOverallRanking = getRanking(participantsWithScore, 'total_score');
+    
+    // Update positions for all users
+    users.forEach(user => {
+        const rankInfo = finalOverallRanking.find(r => r.user === user.User);
+        user.position = rankInfo ? rankInfo.rank : null;
+    });
 
     // GP round positions for position progression chart
     const round1Users = users.filter(u => u.rounds['Round 1'] > 0);
     round1Users.sort((a, b) => b.rounds['Round 1'] - a.rounds['Round 1']);
     round1Users.forEach((u, idx) => { u.round1Position = idx + 1; });
+    
     const round2Users = users.filter(u => u.rounds['Round 2'] > 0);
     round2Users.sort((a, b) => b.rounds['Round 2'] - a.rounds['Round 2']);
     round2Users.forEach((u, idx) => { u.round2Position = idx + 1; });
+    
     const round3Users = users.filter(u => u.rounds['Round 3'] > 0);
     round3Users.sort((a, b) => b.rounds['Round 3'] - a.rounds['Round 3']);
     round3Users.forEach((u, idx) => { u.round3Position = idx + 1; });
     
-    // Tie-aware ranking for IOI Selection Day 1 and Day 2
     // Tie-aware ranking for IOI Selection Day 1
     const day1Participants = users.filter(u => u.ioi_selection_day1_score > 0);
     handleTiedPositions(day1Participants, 'ioi_selection_day1_score', 'ioiDay1Position', 'ioiDay1PositionRange');
@@ -880,6 +893,8 @@ $(document).ready(function() {
 
 // Helper to normalize strings (remove diacritics and lowercase)
 function normalizeString(str) {
+    if (!str) return '';
+    
     return str
         .replace(/[əƏ]/g, 'a')  // Replace schwa with 'a' for matching
         .normalize('NFD')               // decompose combined letters
