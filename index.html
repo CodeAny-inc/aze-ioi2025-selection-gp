@@ -305,6 +305,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <script src="script.js"></script>
+    <!-- Make sure script.js is loaded after all libraries and wrapped in DOM ready event -->
+    <script>
+        // Make sure document is fully loaded before initializing
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log("DOM fully loaded");
+            // Load the main script dynamically to ensure all dependencies are ready
+            const script = document.createElement('script');
+            script.src = 'script.js';
+            script.onload = function() {
+                console.log("script.js loaded successfully");
+            };
+            script.onerror = function() {
+                console.error("Error loading script.js");
+                alert("Failed to load the application script. Please refresh the page or check your connection.");
+            };
+            document.body.appendChild(script);
+        });
+    </script>
 </body>
 </html>

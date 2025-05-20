@@ -613,13 +613,33 @@ function getProgressBarClass(score) {
 
 // Update summary statistics based on Total Score
 function updateSummaryStats(users) {
-    const participantsWithPositiveBonus = users.filter(u => (u['Bonus Points'] || 0) > 0).length;
-    const participantsWithPositiveTotal = users.filter(u => (u['total_score'] || 0) > 0).length;
-    
-    $('#totalParticipants').text(participantsWithPositiveBonus);
-    $('#totalPositiveScore').text(participantsWithPositiveTotal);
-    $('#topScore').text(Math.max(...users.map(u => u['total_score'] || 0)).toFixed(2));
-    $('#avgScore').text((users.reduce((sum, u) => sum + (u['total_score'] || 0), 0) / users.filter(u => (u['total_score'] || 0) > 0).length).toFixed(2));
+    try {
+        const participantsWithPositiveBonus = users.filter(u => (u['Bonus Points'] || 0) > 0).length;
+        const participantsWithPositiveTotal = users.filter(u => (u['total_score'] || 0) > 0).length;
+        
+        // Safely update elements if they exist
+        const safeUpdate = (selector, value) => {
+            const element = document.getElementById(selector);
+            if (element) {
+                element.textContent = value;
+            } else {
+                console.warn(`Element #${selector} not found`);
+            }
+        };
+        
+        safeUpdate('totalParticipants', participantsWithPositiveBonus);
+        safeUpdate('totalPositiveScore', participantsWithPositiveTotal);
+        safeUpdate('topScore', Math.max(...users.map(u => u['total_score'] || 0)).toFixed(2));
+        
+        const positiveScoreUsers = users.filter(u => (u['total_score'] || 0) > 0);
+        const avgScore = positiveScoreUsers.length > 0 
+            ? users.reduce((sum, u) => sum + (u['total_score'] || 0), 0) / positiveScoreUsers.length
+            : 0;
+        
+        safeUpdate('avgScore', avgScore.toFixed(2));
+    } catch (error) {
+        console.error('Error updating summary stats:', error);
+    }
 }
 
 // Initialize DataTable
@@ -707,10 +727,36 @@ function setupCustomFilters() {
 // Main initialization function
 async function main() {
     try {
+        // Add debugging for script execution
+        console.log("Script initialization started");
+        
+        // Check if jQuery and required libraries are loaded
+        if (typeof $ === 'undefined') {
+            console.error("jQuery is not loaded!");
+            alert("jQuery library is not loaded. This might prevent the application from working correctly.");
+            return;
+        }
+        
+        if (typeof Papa === 'undefined') {
+            console.error("PapaParse is not loaded!");
+            alert("PapaParse library is not loaded. This might prevent CSV parsing from working correctly.");
+            return;
+        }
+        
+        if (typeof bootstrap === 'undefined') {
+            console.warn("Bootstrap JS may not be loaded!");
+        }
+        
+        if (typeof Chart === 'undefined') {
+            console.warn("Chart.js may not be loaded!");
+        }
+        
         // Parse CSV data for GP rounds
+        console.log("Parsing CSV data...");
         const data1 = parseCSV(ranking1CSV);
         const data2 = parseCSV(ranking2CSV);
         const data3 = parseCSV(ranking3CSV);
+        console.log(`Found ${data1.length} entries in Round 1, ${data2.length} entries in Round 2, ${data3.length} entries in Round 3`);
 
         // Sets to track participants by round
         const round1Participants = new Set(data1.map(entry => cleanUserName(entry.User)));
@@ -746,6 +792,7 @@ async function main() {
         });
 
         let users = Object.values(usersMap);
+        console.log(`Total unique participants: ${users.length}`);
         
         // Calculate GP scores and places for each round
         handleTiedScores(users, 'Round 1');
@@ -768,7 +815,14 @@ async function main() {
 
         // Integrate IOI Selection scores, calculate final total_score, and final position (user.position)
         // This also calculates intermediate positions like user.round1Position, user.ioiDay1Position etc.
+        console.log("Integrating IOI Selection scores...");
         integrateIOISelectionsIntoLeaderboard(users); 
+        
+        // Log stats about scores
+        const usersWithPositiveTotal = users.filter(u => (u['total_score'] || 0) > 0);
+        const usersWithPositiveBonus = users.filter(u => (u['Bonus Points'] || 0) > 0);
+        console.log(`Participants with positive total score: ${usersWithPositiveTotal.length}`);
+        console.log(`Participants with positive bonus: ${usersWithPositiveBonus.length}`);
 
         // Calculate the main trend (rankDiff)
         users.forEach(user => {
@@ -786,13 +840,36 @@ async function main() {
         });
         
         globalData = users;
+        console.log("Initializing DataTable...");
         dataTable = initializeDataTable(users);
         updateSummaryStats(users);
+        console.log("Initialization complete");
         
     } catch (error) {
         console.error('Error initializing data:', error);
-        alert('Error loading data. Please try again.');
+        alert('Error loading data. Please check the console for details and try again.');
     }
+}
+
+// Make sure we wrap everything in a document ready handler
+if (typeof jQuery !== 'undefined') {
+    // If jQuery is already loaded, use standard document ready
+    $(document).ready(function() {
+        console.log("jQuery document ready event fired");
+        setTimeout(main, 100); // Small delay to ensure DOM is fully processed
+    });
+} else {
+    // Fallback to standard DOM ready if jQuery isn't available
+    document.addEventListener("DOMContentLoaded", function() {
+        console.log("DOM content loaded event fired");
+        setTimeout(function() {
+            if (typeof main === 'function') {
+                main();
+            } else {
+                console.error("main function not found");
+            }
+        }, 100); // Small delay to ensure DOM is fully processed
+    });
 }
 
 // --- Parse and integrate IOI Selection Day 1 & 2 as separate competitions ---
@@ -886,10 +963,6 @@ function handleTiedPositions(users, scoreKey, posKey, rangeKey) {
         currentPlace += count;
     });
 }
-
-$(document).ready(function() {
-    main();
-});
 
 // Helper to normalize strings (remove diacritics and lowercase)
 function normalizeString(str) {
