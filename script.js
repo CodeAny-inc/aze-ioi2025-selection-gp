@@ -154,7 +154,7 @@ const ranking2CSV = `#;Username;User;discount;permutations;password;Global;;
 21;selection2025_2021;Muhammedali Əhmədov;59;11;0;70;;
 22;selection2025_2024;Ömər Əliməmmədzadə;59;11;0;70;;
 23;selection2025_2028;Raul Cəfərli;59;11;0;70;;
-24;selection2025_2044;Əli Suleymanzadə;59;11;0;70;;
+24;selection2025_2044;Əli Süleymanzadə;59;11;0;70;;
 25;selection2025_2002;Atabəy Rəcəbli;46;11;4;61;seçmə 1 yüksək nəticə ;
 26;selection2025_2020;Mirrəhim Mirvəlişli;46;11;4;61;;
 27;selection2025_2056;Ədalət Əzimli;59;0;0;59;aşağı yaş;
@@ -329,6 +329,18 @@ function cleanUserName(user) {
         return parts.slice(0, 2).join(' ');
     }
     return user.trim();
+}
+
+// Helper to normalize strings (remove diacritics and lowercase)
+function normalizeString(str) {
+    if (!str) return '';
+    
+    return str
+        .replace(/[əƏ]/g, 'a')  // Replace schwa with 'a' for matching
+        .normalize('NFD')               // decompose combined letters
+        .replace(/[\u0000-\u001F\u007F-\u007F]/g, '') // remove control chars
+        .replace(/[\u0300-\u036f]/g, '') // remove diacritics
+        .toLowerCase();
 }
 
 // Calculate GP score based on place
@@ -887,28 +899,38 @@ if (typeof jQuery !== 'undefined') {
 
 // --- Parse and integrate IOI Selection Day 1 & 2 as separate competitions ---
 function parseIOISelections() {
-    const day1 = Papa.parse(ioiDay1CSV, { header: true, skipEmptyLines: true }).data;
-    const day2 = Papa.parse(ioiDay2CSV, { header: true, skipEmptyLines: true }).data;
+    const day1Data = Papa.parse(ioiDay1CSV, { header: true, skipEmptyLines: true }).data;
+    const day2Data = Papa.parse(ioiDay2CSV, { header: true, skipEmptyLines: true }).data;
     const ioiDay1Map = {};
-    day1.forEach(row => {
-        const fullName = row['Full name'] ? row['Full name'].trim() : '';
-        if (!fullName) return;
-        const cleaned = cleanUserName(fullName);
-        const normName = normalizeString(cleaned);
-        ioiDay1Map[normName] = parseFloat(row.Global) || 0;
+    day1Data.forEach(row => {
+        const nameFromCsv = row['Full name'] ? row['Full name'].trim() : ''; // Day 1 uses 'Full name'
+        if (!nameFromCsv) return;
+        const cleanedName = cleanUserName(nameFromCsv);
+        const normName = normalizeString(cleanedName);
+        if (normName) { // Ensure normName is not empty
+            ioiDay1Map[normName] = {
+                score: parseFloat(row.Global) || 0,
+                originalName: cleanedName
+            };
+        }
     });
     const ioiDay2Map = {};
-    day2.forEach(row => {
-        const userName = row.User ? row.User.trim() : '';
-        if (!userName) return;
-        const cleaned = cleanUserName(userName);
-        const normName = normalizeString(cleaned);
-        ioiDay2Map[normName] = parseFloat(row.Global) || 0;
+    day2Data.forEach(row => {
+        const nameFromCsv = row.User ? row.User.trim() : ''; // Day 2 uses 'User'
+        if (!nameFromCsv) return;
+        const cleanedName = cleanUserName(nameFromCsv);
+        const normName = normalizeString(cleanedName);
+        if (normName) { // Ensure normName is not empty
+            ioiDay2Map[normName] = {
+                score: parseFloat(row.Global) || 0,
+                originalName: cleanedName
+            };
+        }
     });
     
     // Calculate maximum scores for progress bars
-    maxIoiDay1Score = Math.max(...Object.values(ioiDay1Map));
-    maxIoiDay2Score = Math.max(...Object.values(ioiDay2Map));
+    maxIoiDay1Score = Object.values(ioiDay1Map).length > 0 ? Math.max(0, ...Object.values(ioiDay1Map).map(d => d.score)) : 0;
+    maxIoiDay2Score = Object.values(ioiDay2Map).length > 0 ? Math.max(0, ...Object.values(ioiDay2Map).map(d => d.score)) : 0;
     
     return { ioiDay1Map, ioiDay2Map };
 }
@@ -916,11 +938,74 @@ function parseIOISelections() {
 // --- Integrate IOI selection scores into main leaderboard ---
 function integrateIOISelectionsIntoLeaderboard(users) {
     const { ioiDay1Map, ioiDay2Map } = parseIOISelections();
+
+    const existingUsersMap = new Map();
     users.forEach(user => {
-        const normName = normalizeString(user.User);
-        user.ioi_selection_day1_score = ioiDay1Map[normName] || 0;
-        user.ioi_selection_day2_score = ioiDay2Map[normName] || 0;
-        user.total_score = (user['Bonus Points'] || 0) + user.ioi_selection_day1_score + user.ioi_selection_day2_score;
+        existingUsersMap.set(normalizeString(user.User), user);
+    });
+
+    const defaultNewUserProps = (originalName) => ({
+        User: originalName,
+        ioi_selection_day1_score: 0,
+        ioi_selection_day2_score: 0,
+        'Bonus Points': 0,
+        total_score: 0,
+        rounds: { 'Round 1': 0, 'Round 2': 0, 'Round 3': 0 },
+        'Round 1 GP Score': 0, 'Round 2 GP Score': 0, 'Round 3 GP Score': 0,
+        'Round 1 Place': null, 'Round 2 Place': null, 'Round 3 Place': null,
+        'Best 3 GP Scores': 0,
+        missedRounds: ['Round 1', 'Round 2', 'Round 3'], // Assume missed all GP if new
+        rankAfterGP: null,
+        position: null,
+        rankDiff: null,
+        ioiDay1Position: null, ioiDay1PositionRange: null,
+        ioiDay2Position: null, ioiDay2PositionRange: null,
+        round1Position: null, round1PositionRange: null,
+        round2Position: null, round2PositionRange: null,
+        round3Position: null, round3PositionRange: null,
+        trendCalculationPreviousRank: null,
+        trendCalculationCurrentRank: null,
+    });
+
+    // Process IOI Day 1 participants
+    for (const normName in ioiDay1Map) {
+        const day1Entry = ioiDay1Map[normName];
+        let user = existingUsersMap.get(normName);
+        if (!user) {
+            user = defaultNewUserProps(day1Entry.originalName);
+            user.ioi_selection_day1_score = day1Entry.score;
+            users.push(user);
+            existingUsersMap.set(normName, user);
+        } else {
+            user.ioi_selection_day1_score = day1Entry.score;
+        }
+    }
+
+    // Process IOI Day 2 participants
+    for (const normName in ioiDay2Map) {
+        const day2Entry = ioiDay2Map[normName];
+        let user = existingUsersMap.get(normName);
+        if (!user) {
+            user = defaultNewUserProps(day2Entry.originalName);
+            user.ioi_selection_day2_score = day2Entry.score;
+            users.push(user);
+            existingUsersMap.set(normName, user);
+        } else {
+            user.ioi_selection_day2_score = day2Entry.score;
+        }
+    }
+    
+    // Ensure all scores are numbers and calculate total_score
+    users.forEach(user => {
+        user.ioi_selection_day1_score = parseFloat(user.ioi_selection_day1_score || 0);
+        user.ioi_selection_day2_score = parseFloat(user.ioi_selection_day2_score || 0);
+        user['Bonus Points'] = parseFloat(user['Bonus Points'] || 0);
+        user['Round 1 GP Score'] = parseFloat(user['Round 1 GP Score'] || 0);
+        user['Round 2 GP Score'] = parseFloat(user['Round 2 GP Score'] || 0);
+        user['Round 3 GP Score'] = parseFloat(user['Round 3 GP Score'] || 0);
+        user['Best 3 GP Scores'] = parseFloat(user['Best 3 GP Scores'] || 0);
+
+        user.total_score = user['Bonus Points'] + user.ioi_selection_day1_score + user.ioi_selection_day2_score;
     });
     
     // Final overall ranking - only consider participants with positive total score
@@ -941,10 +1026,19 @@ function integrateIOISelectionsIntoLeaderboard(users) {
         const positionProp = `${roundName.toLowerCase().replace(/\s+/g, '')}Position`; // e.g., round1Position
         const positionRangeProp = `${positionProp}Range`; // e.g., round1PositionRange
 
+        // Initialize positions to null for all users for this round first
+        users.forEach(u => {
+            u[positionProp] = null;
+            // u[positionRangeProp] = null; // Store if needed for display
+        });
+
         // Create a temporary list of users who participated in the round, with their score for that round
         const participantsForRoundRanking = users
-            .filter(u => !u.missedRounds.includes(roundName) && getNestedScore(u, scorePath) !== undefined)
-            .map(u => ({ User: u.User,  _internal_score_for_ranking: getNestedScore(u, scorePath) }));
+            .filter(u => {
+                const score = getNestedScore(u, scorePath);
+                return !u.missedRounds.includes(roundName) && score !== undefined && parseFloat(score) > 0;
+            })
+            .map(u => ({ User: u.User,  _internal_score_for_ranking: parseFloat(getNestedScore(u, scorePath)) }));
 
         if (participantsForRoundRanking.length > 0) {
             handleTiedPositions(participantsForRoundRanking, '_internal_score_for_ranking', 'tempPos', 'tempPosRange');
@@ -961,12 +1055,14 @@ function integrateIOISelectionsIntoLeaderboard(users) {
     });
     
     // Tie-aware ranking for IOI Selection Day 1
+    users.forEach(u => { u.ioiDay1Position = null; /* u.ioiDay1PositionRange = null; */ }); // Initialize
     const day1Participants = users.filter(u => u.ioi_selection_day1_score > 0);
     if (day1Participants.length > 0) {
         handleTiedPositions(day1Participants, 'ioi_selection_day1_score', 'ioiDay1Position', 'ioiDay1PositionRange');
     }
 
     // Tie-aware ranking for IOI Selection Day 2
+    users.forEach(u => { u.ioiDay2Position = null; /* u.ioiDay2PositionRange = null; */ }); // Initialize
     const day2Participants = users.filter(u => u.ioi_selection_day2_score > 0);
     if (day2Participants.length > 0) {
         handleTiedPositions(day2Participants, 'ioi_selection_day2_score', 'ioiDay2Position', 'ioiDay2PositionRange');
